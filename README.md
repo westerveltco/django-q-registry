@@ -109,3 +109,7 @@ python manage.py setup_periodic_tasks
 ```
 
 This command automatically registers periodic tasks from `tasks.py` files in Django apps, and from the `Q_REGISTRY["TASKS"]` setting. It also cleans up any periodic tasks that are no longer registered.
+
+## License
+
+`django-q-registry` is licensed under the MIT license. See the [`LICENSE`](LICENSE) file for more information.
