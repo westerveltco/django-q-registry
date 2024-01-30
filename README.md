@@ -7,6 +7,7 @@ A Django app that provides a registry for Django Q2 periodic tasks.
 - Python 3.8, 3.9, 3.10, 3.11, or 3.12
 - Django 3.2, 4.2, or 5.0
 - Django Q2 1.4.3 or later
+    - This package has only been tested with the Django ORM broker. The other's may work, but they have not been tested.
 
 ## Getting Started
 
@@ -27,6 +28,8 @@ INSTALLED_APPS = [
 ```
 
 ## Usage
+
+### Registering Periodic Tasks
 
 There are three supported ways to register periodic tasks:
 
@@ -94,3 +97,15 @@ Q_REGISTRY = {
         },
     ],
 }
+```
+
+### Using the Registry in Production
+
+At some point in your project's deployment process, run the `setup_periodic_tasks` management command:
+
+```bash
+python manage.py migrate
+python manage.py setup_periodic_tasks
+```
+
+This command automatically registers periodic tasks from `tasks.py` files in Django apps, and from the `Q_REGISTRY["TASKS"]` setting. It also cleans up any periodic tasks that are no longer registered.
