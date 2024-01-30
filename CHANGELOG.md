@@ -26,6 +26,11 @@ Initial release!
 - Initial documentation.
 - Initial tests.
 - Initial CI/CD (GitHub Actions).
+- A registry for Django Q2 periodic tasks.
+    - `registry.register` function for registering periodic tasks with a convenience decorator `register_task`.
+    - A `TASKS` setting for registering periodic tasks from Django settings.
+- Autodiscovery of periodic tasks from a Django project's `tasks.py` files.
+- A `setup_periodic_tasks` management command for setting up periodic tasks in the Django Q2 broker.
 
 ### New Contributors
 
