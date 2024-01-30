@@ -56,7 +56,7 @@ def send_test_email():
 
 ```python
 from django.core.mail import send_mail
-from django_q_registry.registry import register
+from django_q_registry.registry import registry
 
 
 registry.register(
