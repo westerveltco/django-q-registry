@@ -106,7 +106,7 @@ Q_REGISTRY = {
 }
 ```
 
-### Using the Registry in Production
+### Setting up Periodic Tasks in Production
 
 At some point in your project's deployment process, run the `setup_periodic_tasks` management command:
 
