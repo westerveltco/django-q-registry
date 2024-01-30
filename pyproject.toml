@@ -4,10 +4,16 @@ requires = ["hatchling"]
 
 [project]
 authors = [
-  {name = "Josh", email = "josh@joshthomas.dev"},
+  {name = "Josh", email = "josh@joshthomas.dev"}
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
+  "Framework :: Django",
+  "Framework :: Django :: 3",
+  "Framework :: Django :: 3.2",
+  "Framework :: Django :: 4",
+  "Framework :: Django :: 4.2",
+  "Framework :: Django :: 5.0",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
@@ -17,88 +23,146 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython"
 ]
 dependencies = [
   "django>=3.2",
-  "django_q2>=1.4.3",
+  "django_q2>=1.4.3"
 ]
 description = "A Django app to register Django Q tasks."
 dynamic = ["version"]
 keywords = []
-license = "MIT"
+license = {file = "LICENSE"}
 name = "django-q-registry"
 readme = "README.md"
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [
-  "black",
+  "bumpver",
   "coverage[toml]",
+  "django-stubs",
+  "django-stubs-ext",
+  "faker",
   "hatch",
   "mypy",
+  "model-bakery",
   "nox",
   "pytest",
+  "pytest-cov",
   "pytest-django",
-  "pytest-xdist",
-  "ruff",
+  "pytest-randomly",
+  "pytest-reverse",
+  "pytest-xdist"
 ]
+docs = [
+  "cogapp",
+  "furo",
+  "myst-parser",
+  "sphinx",
+  "sphinx-autobuild",
+  "sphinx-copybutton",
+  "sphinx-inline-tabs"
+]
+lint = ["pre-commit"]
 
 [project.urls]
 Documentation = "https://github.com/joshuadavidthomas/django-q-registry#readme"
 Issues = "https://github.com/joshuadavidthomas/django-q-registry/issues"
 Source = "https://github.com/joshuadavidthomas/django-q-registry"
 
-[tool.hatch.version]
-path = "src/django_q_registry/__init__.py"
+[tool.bumpver]
+commit = true
+commit_message = ":bookmark: bump version {old_version} -> {new_version}"
+current_version = "0.1.0"
+push = false  # set to false for CI
+tag = false
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 
-[tool.black]
-line-length = 120
-skip-string-normalization = true
-target-version = ["py38"]
+[tool.bumpver.file_patterns]
+"src/django_q_registry/__init__.py" = [
+  '__version__ = "{version}"'
+]
+"tests/test_version.py" = [
+  'assert __version__ == "{version}"'
+]
 
 [tool.coverage.report]
 exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
+  "pragma: no cover",
+  "if DEBUG:",
+  "if not DEBUG:",
+  "if settings.DEBUG:",
   "if TYPE_CHECKING:",
+  'def __str__\(self\)\s?\-?\>?\s?\w*\:'
 ]
+fail_under = 75
 
 [tool.coverage.run]
-source = ["."]
+omit = [
+  "tests/*"
+]
+source = ["django_q_registry"]
 
+[tool.hatch.build]
+exclude = [
+  ".github/*",
+  ".dockerfiles/*",
+  ".dockerignore",
+  ".editorconfig",
+  ".pre-commit-config.yaml",
+  "Justfile"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/django_q_registry"]
+
+[tool.hatch.version]
+path = "src/django_q_registry/__init__.py"
 
 [tool.mypy]
-ignore_missing_imports = true
+check_untyped_defs = true
+exclude = "docs/.*\\.py$"
 mypy_path = "src/"
 namespace_packages = false
-show_error_codes = true
-strict = true
-warn_unreachable = true
+no_implicit_optional = true
+plugins = [
+  "mypy_django_plugin.main"
+]
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-allow_untyped_defs = true
+ignore_errors = true
+ignore_missing_imports = true
 module = "tests.*"
 
+[tool.mypy_django_plugin]
+ignore_missing_model_attributes = true
+
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "tests.settings"
+addopts = "--create-db -n auto --dist loadfile --doctest-modules"
 django_find_project = false
-pythonpath = ". src"
+norecursedirs = ".* bin build dist *.egg htmlcov logs node_modules templates venv"
 python_files = "tests.py test_*.py *_tests.py"
+pythonpath = "src"
+testpaths = ["tests"]
 
 [tool.ruff]
 ignore = [
   # Allow non-abstract empty methods in abstract base classes
-  "B027", # Allow boolean positional values in function calls, like `dict.get(... True)`
-  "FBT003", # Ignore checks for possible passwords
+  "B027",  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",  # Ignore checks for possible passwords
   "S105",
   "S106",
-  "S107", # Ignore complexity
+  "S107",  # Ignore complexity
   "C901",
   "PLR0911",
   "PLR0912",
   "PLR0913",
-  "PLR0915",
+  "PLR0915"
 ]
 line-length = 120
 select = [
@@ -126,21 +190,21 @@ select = [
   "TID",
   "UP",
   "W",
-  "YTT",
+  "YTT"
 ]
 target-version = "py38"
 unfixable = [
   # Don't touch unused imports
-  "F401",
+  "F401"
 ]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.isort]
 force-single-line = true
 known-first-party = ["django_q_registry"]
 required-imports = ["from __future__ import annotations"]
-
-[tool.ruff.flake8-tidy-imports]
-ban-relative-imports = "all"
 
 [tool.ruff.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
