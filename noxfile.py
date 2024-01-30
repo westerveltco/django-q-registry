@@ -76,7 +76,7 @@ def tests(session, django):
 @nox.session
 def coverage(session):
     session.install(".[dev]")
-    session.run("python", "-m", "pytest", "--cov=django_twc_toolbox")
+    session.run("python", "-m", "pytest", "--cov=django_q_registry")
 
     try:
         summary = os.environ["GITHUB_STEP_SUMMARY"]
