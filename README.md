@@ -58,6 +58,7 @@ def send_test_email():
 from django.core.mail import send_mail
 from django_q_registry.registry import register
 
+
 registry.register(
     send_mail,
     name="Send periodic test email",
