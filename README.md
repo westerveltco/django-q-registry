@@ -1,5 +1,12 @@
 # django-q-registry
 
+[![PyPI](https://img.shields.io/pypi/v/django-q-registry)](https://pypi.org/project/django-q-registry/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-q-registry)
+![Django Version](https://img.shields.io/badge/django-3.2%20%7C%204.2%20%7C%205.0-%2344B78B?labelColor=%23092E20)
+<!-- https://shields.io/badges -->
+<!-- django-3.2 | 4.2 | 5.0-#44B78B -->
+<!-- labelColor=%23092E20 -->
+
 A Django app that provides a registry for Django Q2 periodic tasks.
 
 ## Requirements
