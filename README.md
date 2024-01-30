@@ -43,7 +43,9 @@ There are three supported ways to register periodic tasks:
 1. In a `tasks.py` file in a Django app, using the `@register_task` decorator:
 
 ```python
+# tasks.py
 from django.core.mail import send_mail
+from django_q.models import Schedule
 from django_q_registry import register_task
 
 
@@ -65,7 +67,9 @@ def send_test_email():
 2. In a `tasks.py` file in a Django app, using the `registry.register` function directly:
 
 ```python
+# tasks.py
 from django.core.mail import send_mail
+from django_q.models import Schedule
 from django_q_registry.registry import registry
 
 
@@ -87,6 +91,10 @@ registry.register(
 3. In a Django project's `settings.py` file, using the `Q_REGISTRY["TASKS"]` setting:
 
 ```python
+# settings.py
+from django_q.models import Schedule
+
+
 Q_REGISTRY = {
     "TASKS": [
         {
