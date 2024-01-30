@@ -9,7 +9,7 @@ pytest_plugins = []  # type: ignore
 
 
 # Settings fixtures to bootstrap our tests
-def pytest_configure(_):
+def pytest_configure(config):  # noqa: ARG001
     logging.disable(logging.CRITICAL)
 
     settings.configure(
