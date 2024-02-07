@@ -10,8 +10,6 @@ from __future__ import annotations
 import os
 import sys
 
-import django
-
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -24,13 +22,13 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Django setup -----------------------------------------------------------
 # This is required to import Django code in Sphinx using autodoc.
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
-django.setup()
+# os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
+# django.setup()
 
 
 # -- Project information -----------------------------------------------------
 
-project = "Django Q Registry"
+project = "django-q-registry"
 copyright = "2023, Josh Thomas"  # noqa: A001
 author = "Josh Thomas"
 
@@ -96,7 +94,7 @@ html_theme_options = {
 html_sidebars = {
     "**": [
         "sidebar/brand.html",
-        "sidebar/repo.html",
+        # "sidebar/repo.html",
         "sidebar/search.html",
         "sidebar/scroll-start.html",
         "sidebar/navigation.html",
