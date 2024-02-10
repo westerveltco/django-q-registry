@@ -142,6 +142,7 @@ warn_unused_ignores = true
 ignore_errors = true
 ignore_missing_imports = true
 module = [
+  "django_q.*",
   "django_q_registry.*.migrations.*",
   "tests.*"
 ]
