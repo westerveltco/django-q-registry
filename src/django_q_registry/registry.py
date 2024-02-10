@@ -22,7 +22,11 @@ class Task:
         return hash((self.name, self.func, tuple(self.kwargs.items())))
 
     def __eq__(self, other) -> bool:
-        return self.name == other.name and self.func == other.func and self.kwargs == other.kwargs
+        return (
+            self.name == other.name
+            and self.func == other.func
+            and self.kwargs == other.kwargs
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -168,7 +172,9 @@ class TaskRegistry:
             )
             orm_tasks.append(obj.pk)
 
-        Schedule.objects.exclude(pk__in=orm_tasks).filter(name__endswith=suffix).delete()
+        Schedule.objects.exclude(pk__in=orm_tasks).filter(
+            name__endswith=suffix
+        ).delete()
 
 
 registry = TaskRegistry()
