@@ -9,8 +9,9 @@ build:
     - tree
   jobs:
     pre_build:
+      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to .
       - tree
-      - cog -r docs/development/just.md
+      - cog -r ./docs/development/just.md
   os: ubuntu-22.04
   tools:
     python: "3.12"
