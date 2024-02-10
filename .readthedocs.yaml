@@ -9,7 +9,7 @@ build:
     - tree
   jobs:
     pre_build:
-      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to .
+      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
       - tree
       - cog -r ./docs/development/just.md
   os: ubuntu-22.04
