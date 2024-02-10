@@ -1,3 +1,3 @@
 # Authors
 
-Josh Thomas <josh@joshthomas.dev>
+- Josh Thomas <josh@joshthomas.dev>

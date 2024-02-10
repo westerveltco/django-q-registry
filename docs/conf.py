@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -9,6 +8,8 @@ from __future__ import annotations
 
 import os
 import sys
+
+# import django
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -29,7 +30,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "django-q-registry"
-copyright = "2023, Josh Thomas"  # noqa: A001
+copyright = "2023, Josh Thomas"
 author = "Josh Thomas"
 
 
@@ -94,7 +95,6 @@ html_theme_options = {
 html_sidebars = {
     "**": [
         "sidebar/brand.html",
-        # "sidebar/repo.html",
         "sidebar/search.html",
         "sidebar/scroll-start.html",
         "sidebar/navigation.html",

@@ -7,3 +7,4 @@ __version__ = "0.1.0"
 __all__ = [
     "register_task",
 ]
+__template_version__ = "2024.7"

@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -40,7 +40,7 @@ jobs:
 
       - name: Check if test session exists
         run: |
-          if nox -l | grep "${{ env.NOX_SESSION }}"; then
+          if nox -l | grep -q "${{ env.NOX_SESSION }}"; then
             echo "Session exists, proceeding with tests"
             echo "RUN_TESTS=true" >> $GITHUB_ENV
           else
