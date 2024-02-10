@@ -17,6 +17,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 -->
 ## [Unreleased]
 
+### Changed
+
+- Now using [`django-twc-package`](https://github.com/westerveltco/django-twc-package) template for repository and package structure.
+
 ## [0.1.0]
 
 Initial release!

@@ -3,14 +3,12 @@ set dotenv-load := true
 @_default:
     just --list
 
+bootstrap:
+    python -m pip install --editable '.[dev]'
+
 # ----------------------------------------------------------------------
 # DEPENDENCIES
 # ----------------------------------------------------------------------
-
-alias install := bootstrap
-
-bootstrap:
-    python -m pip install --editable '.[dev]'
 
 pup:
     python -m pip install --upgrade pip
@@ -26,7 +24,7 @@ update:
 test *ARGS:
     python -m nox --reuse-existing-virtualenvs --session "test" -- "{{ ARGS }}"
 
-test-all *ARGS:
+testall *ARGS:
     python -m nox --reuse-existing-virtualenvs --session "tests" -- "{{ ARGS }}"
 
 coverage:
@@ -86,8 +84,26 @@ migrate *ARGS:
 # UTILS
 # ----------------------------------------------------------------------
 
+# format justfile
+fmt:
+    just --fmt --unstable
+
+# run pre-commit on all files
 lint:
     python -m nox --reuse-existing-virtualenvs --session "lint"
 
-mypy:
-    python -m nox --reuse-existing-virtualenvs --session "mypy"
+# ----------------------------------------------------------------------
+# COPIER
+# ----------------------------------------------------------------------
+
+# create a copier answers file
+copier-copy TEMPLATE_PATH DESTINATION_PATH=".":
+    pipx run copier copy {{ TEMPLATE_PATH }} {{ DESTINATION_PATH }}
+
+# update the project using a copier answers file
+copier-update ANSWERS_FILE *ARGS:
+    pipx run copier update --answers-file {{ ANSWERS_FILE }} {{ ARGS }}
+
+# loop through all answers files and update the project using copier
+@copier-update-all *ARGS:
+    for file in `ls .copier-answers/`; do just copier-update .copier-answers/$file "{{ ARGS }}"; done

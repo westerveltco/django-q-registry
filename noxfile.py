@@ -21,7 +21,7 @@ DJMAIN = "main"
 DJMAIN_MIN_PY = PY310
 DJ_VERSIONS = [DJ32, DJ42, DJ50, DJMAIN]
 DJ_LTS = [DJ32, DJ42]
-DJ_DEFAULT = DJ_LTS[-1]
+DJ_DEFAULT = DJ_LTS[0]
 DJ_LATEST = DJ_VERSIONS[-2]
 
 
@@ -30,34 +30,38 @@ def version(ver: str) -> tuple[int, ...]:
     return tuple(map(int, ver.split(".")))
 
 
-def should_skip(python: str, django: str) -> tuple[bool, str | None]:
+def should_skip(python: str, django: str) -> bool:
     """Return True if the test should be skipped"""
+
     if django == DJMAIN and version(python) < version(DJMAIN_MIN_PY):
-        return True, f"Django {DJMAIN} requires Python {DJMAIN_MIN_PY}+"
+        # Django main requires Python 3.10+
+        return True
 
     if django == DJ32 and version(python) >= version(PY312):
-        return True, f"Django {DJ32} requires Python < {PY312}"
+        # Django 3.2 requires Python < 3.12
+        return True
 
     if django == DJ50 and version(python) < version(PY310):
-        return True, f"Django {DJ50} requires Python {PY310}+"
+        # Django 5.0 requires Python 3.10+
+        return True
 
-    return False, None
+    return False
 
 
 @nox.session
 def test(session):
-    default_test = f"tests(python='{PY_DEFAULT}', django='{DJ_DEFAULT}')"
-    if session.posargs:
-        session.notify(default_test, posargs=session.posargs)
-    else:
-        session.notify(default_test)
-    session.skip()
+    session.notify(f"tests(python='{PY_DEFAULT}', django='{DJ_DEFAULT}')")
 
 
 @nox.session
 @nox.parametrize(
     "python,django",
-    [(python, django) for python in PY_VERSIONS for django in DJ_VERSIONS if not should_skip(python, django)[0]],
+    [
+        (python, django)
+        for python in PY_VERSIONS
+        for django in DJ_VERSIONS
+        if not should_skip(python, django)
+    ],
 )
 def tests(session, django):
     session.install(".[dev]")
@@ -67,10 +71,7 @@ def tests(session, django):
     else:
         session.install(f"django=={django}")
 
-    if session.posargs:
-        session.run("python", "-m", "pytest", *session.posargs)
-    else:
-        session.run("python", "-m", "pytest")
+    session.run("python", "-m", "pytest")
 
 
 @nox.session
@@ -95,7 +96,9 @@ def coverage(session):
                 stdout=output_buffer,
             )
     except KeyError:
-        session.run("python", "-m", "coverage", "html", "--skip-covered", "--skip-empty")
+        session.run(
+            "python", "-m", "coverage", "html", "--skip-covered", "--skip-empty"
+        )
 
     session.run("python", "-m", "coverage", "report")
 
