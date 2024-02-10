@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v2024.7
+_commit: v2024.8
 _src_path: gh:westerveltco/django-twc-package
 author_email: josh@joshthomas.dev
 author_name: Josh Thomas
@@ -12,7 +12,7 @@ docs_domain: westervelt.dev
 github_owner: westerveltco
 github_repo: django-q-registry
 module_name: django_q_registry
-package_description: A Django app to register Django Q tasks.
+package_description: A Django app to register periodic Django Q tasks.
 package_name: django-q-registry
 python_versions:
 - '3.8'

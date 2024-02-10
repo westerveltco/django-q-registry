@@ -13,10 +13,7 @@ pytest_plugins = []  # type: ignore
 def pytest_configure(config):
     logging.disable(logging.CRITICAL)
 
-    settings.configure(
-        **DEFAULT_SETTINGS,
-        **TEST_SETTINGS,
-    )
+    settings.configure(**DEFAULT_SETTINGS, **TEST_SETTINGS)
 
 
 TEST_SETTINGS = {
