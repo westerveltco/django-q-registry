@@ -71,6 +71,7 @@ migrate *ARGS:
 
 @docs-serve:
     #!/usr/bin/env sh
+    just _cog
     if [ -f "/.dockerenv" ]; then
         sphinx-autobuild docs docs/_build/html --host "0.0.0.0"
     else
@@ -78,7 +79,11 @@ migrate *ARGS:
     fi
 
 @docs-build LOCATION="docs/_build/html":
+    just _cog
     sphinx-build docs {{ LOCATION }}
+
+_cog:
+    cog -r docs/development/just.md
 
 # ----------------------------------------------------------------------
 # UTILS
