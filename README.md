@@ -7,14 +7,14 @@
 <!-- django-3.2 | 4.2 | 5.0-#44B78B -->
 <!-- labelColor=%23092E20 -->
 
-A Django app to register Django Q tasks.
+A Django app to register periodic Django Q tasks.
 
 ## Requirements
 
 - Python 3.8, 3.9, 3.10, 3.11, 3.12
 - Django 3.2, 4.2, 5.0
 - Django Q2 1.4.3+
-    - This package has only been tested with the Django ORM broker.
+  - This package has only been tested with the Django ORM broker.
 
 ## Getting Started
 
