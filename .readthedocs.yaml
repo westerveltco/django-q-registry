@@ -4,8 +4,11 @@
 version: 2
 
 build:
+  apt_packages:
+    - curl
   jobs:
     pre_build:
+      - tree
       - cog -r docs/development/just.md
   os: ubuntu-22.04
   tools:
