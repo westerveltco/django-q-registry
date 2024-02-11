@@ -20,7 +20,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### Changed
 
 - Now using [`django-twc-package`](https://github.com/westerveltco/django-twc-package) template for repository and package structure.
-- The default for the `Q_REGISTRY["PERIOIDIC_TASK_SUFFIX"]` app setting has been changed from "- CRON" to "- QREGISTRY".
+- The default for the `Q_REGISTRY["PERIOIDIC_TASK_SUFFIX"]` app setting has been changed from `"- CRON"` to `"- QREGISTRY"`.
 
 ## [0.1.0]
 
