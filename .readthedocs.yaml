@@ -8,7 +8,7 @@ build:
     pre_build:
       - asdf plugin add just
       - asdf install just latest
-      - cog -r docs/development/just.md
+      - just _cog
   os: ubuntu-22.04
   tools:
     python: "3.12"
