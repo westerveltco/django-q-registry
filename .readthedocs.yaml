@@ -4,15 +4,10 @@
 version: 2
 
 build:
-  apt_packages:
-    - curl
-    - tree
   jobs:
     pre_build:
-      - echo $PATH
-      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
-      - tree
-      - cog -r ./docs/development/just.md
+      - asdf plugin add just
+      - cog -r docs/development/just.md
   os: ubuntu-22.04
   tools:
     python: "3.12"
