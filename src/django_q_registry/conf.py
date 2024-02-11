@@ -8,7 +8,7 @@ from django.conf import settings
 
 class AppSettings:
     DEFAULT_SETTINGS: ClassVar[dict[str, Any]] = {
-        "PERIODIC_TASK_SUFFIX": " - CRON",
+        "PERIODIC_TASK_SUFFIX": " - QREGISTRY",
         "TASKS": [],
     }
 
