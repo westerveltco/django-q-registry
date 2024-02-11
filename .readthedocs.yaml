@@ -6,9 +6,7 @@ version: 2
 build:
   jobs:
     pre_build:
-      - asdf plugin add just
-      - asdf install just latest
-      - asdf global just latest
+      - asdf plugin add just && asdf global just latest
       - just _cog
   os: ubuntu-22.04
   tools:
