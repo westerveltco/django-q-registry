@@ -44,10 +44,6 @@ class TaskRegistry:
     def __post_init__(self):
         self._register_settings()
 
-    def __iter__(self):
-        for registered_task in self.registered_tasks:
-            yield registered_task.to_dict()
-
     def register(self, *args, **kwargs):
         """
         Register a task to be run periodically. Can be used as a function or a decorator.
@@ -167,10 +163,11 @@ class TaskRegistry:
         legacy_suffix = " - CRON"
 
         orm_tasks = []
-        for task in self:
+        for task in self.registered_tasks:
+            task_dict = task.to_dict()
             obj, _ = Schedule.objects.update_or_create(
-                name=f"{task.pop('name')}{suffix}",
-                defaults=task,
+                name=f"{task_dict.pop('name')}{suffix}",
+                defaults=task_dict,
             )
             orm_tasks.append(obj.pk)
 
