@@ -123,4 +123,4 @@ def test_register_all_legacy_suffix(registry):
     registry.register_all()
 
     assert Schedule.objects.count() == 1
-    assert Schedule.objects.first().name == "new_task - QREGISTRY"
+    assert Schedule.objects.first().name == "test_task - QREGISTRY"
