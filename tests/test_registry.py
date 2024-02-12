@@ -81,21 +81,10 @@ def test_register_no_name(registry):
     def test_task():
         return "test"
 
-    tasks = list(registry)
+    tasks = list(registry.registered_tasks)
 
-    assert tasks.pop(0)["name"] == "test_task"
-
-
-def test_iteration(registry):
-    @registry.register(name="test_task")
-    def test_task():
-        return "test"
-
-    for task in registry:
-        assert task == {
-            "name": "test_task",
-            "func": "tests.test_registry.test_task",
-        }
+    assert len(tasks) == 1
+    assert tasks[0].to_dict()["name"] == "test_task"
 
 
 @pytest.mark.django_db
