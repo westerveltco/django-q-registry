@@ -13,7 +13,7 @@ def test_default_settings():
 
 
 def test_default_app_settings():
-    assert app_settings.PERIODIC_TASK_SUFFIX == " - CRON"
+    assert app_settings.PERIODIC_TASK_SUFFIX == " - QREGISTRY"
     assert app_settings.TASKS == []
 
 

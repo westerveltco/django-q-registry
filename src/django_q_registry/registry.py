@@ -8,6 +8,7 @@ from typing import Any
 from typing import Callable
 
 from django.conf import settings
+from django.db import models
 
 from django_q_registry.conf import app_settings
 
@@ -163,6 +164,7 @@ class TaskRegistry:
         from django_q.models import Schedule
 
         suffix = app_settings.PERIODIC_TASK_SUFFIX
+        legacy_suffix = " - CRON"
 
         orm_tasks = []
         for task in self:
@@ -173,7 +175,7 @@ class TaskRegistry:
             orm_tasks.append(obj.pk)
 
         Schedule.objects.exclude(pk__in=orm_tasks).filter(
-            name__endswith=suffix
+            models.Q(name__endswith=legacy_suffix) | models.Q(name__endswith=suffix)
         ).delete()
 
 
