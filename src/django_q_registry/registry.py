@@ -157,7 +157,7 @@ class TaskRegistry:
         Create or update all registered tasks in the database, deleting any tasks that
         are no longer registered.
 
-        We make sure to suffix the name of the task with PERIODIC_TASK_SUFFIX (default: " - CRON")
+        We make sure to suffix the name of the task with PERIODIC_TASK_SUFFIX (default: " - QREGISTRY")
         so that we can easily identify which tasks are periodic tasks. This is useful to
         avoid accidentally deleting scheduled tasks that are not periodic tasks.
         """
