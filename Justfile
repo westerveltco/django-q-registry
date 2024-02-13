@@ -107,8 +107,8 @@ copier-copy TEMPLATE_PATH DESTINATION_PATH=".":
 
 # update the project using a copier answers file
 copier-update ANSWERS_FILE *ARGS:
-    pipx run copier update --answers-file {{ ANSWERS_FILE }} {{ ARGS }}
+    pipx run copier update --answers-file {{ ANSWERS_FILE }} --trust {{ ARGS }}
 
 # loop through all answers files and update the project using copier
 @copier-update-all *ARGS:
-    for file in `ls .copier-answers/`; do just copier-update .copier-answers/$file "{{ ARGS }}"; done
+    for file in `ls .copier/`; do just copier-update .copier/$file "{{ ARGS }}"; done
