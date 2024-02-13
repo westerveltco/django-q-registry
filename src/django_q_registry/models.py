@@ -66,7 +66,7 @@ class TaskQuerySet(models.QuerySet):
 
         self.delete()
 
-        Schedule.objects.filter(models.Q(pk__in=q_schedule_pks)).delete()
+        Schedule.objects.filter(pk__in=q_schedule_pks).delete()
 
 
 class Task(models.Model):
