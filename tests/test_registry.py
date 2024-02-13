@@ -84,7 +84,7 @@ def test_register_no_name(registry):
     tasks = list(registry.registered_tasks)
 
     assert len(tasks) == 1
-    assert tasks[0].to_dict()["name"] == "test_task"
+    assert tasks[0].name == "test_task"
 
 
 @pytest.mark.django_db
