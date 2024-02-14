@@ -101,14 +101,14 @@ lint:
 # COPIER
 # ----------------------------------------------------------------------
 
-# create a copier answers file
+# apply a copier template to project
 copier-copy TEMPLATE_PATH DESTINATION_PATH=".":
-    pipx run copier copy {{ TEMPLATE_PATH }} {{ DESTINATION_PATH }}
+    copier copy {{ TEMPLATE_PATH }} {{ DESTINATION_PATH }}
 
 # update the project using a copier answers file
 copier-update ANSWERS_FILE *ARGS:
-    pipx run copier update --answers-file {{ ANSWERS_FILE }} {{ ARGS }}
+    copier update --trust --answers-file {{ ANSWERS_FILE }} {{ ARGS }}
 
 # loop through all answers files and update the project using copier
 @copier-update-all *ARGS:
-    for file in `ls .copier-answers/`; do just copier-update .copier-answers/$file "{{ ARGS }}"; done
+    for file in `ls .copier/`; do just copier-update .copier/$file "{{ ARGS }}"; done

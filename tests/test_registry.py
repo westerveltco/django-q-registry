@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import pytest
 from django.test import override_settings
+from django_q.models import Schedule
+from model_bakery import baker
 
 from django_q_registry.registry import TaskRegistry
 
@@ -79,18 +81,35 @@ def test_register_no_name(registry):
     def test_task():
         return "test"
 
-    tasks = list(registry)
+    tasks = list(registry.registered_tasks)
 
-    assert tasks.pop(0)["name"] == "test_task"
+    assert len(tasks) == 1
+    assert tasks[0].to_dict()["name"] == "test_task"
 
 
-def test_iteration(registry):
-    @registry.register(name="test_task")
+@pytest.mark.django_db
+def test_register_all_legacy_suffix(registry):
+    # add a task to the registry
     def test_task():
         return "test"
 
-    for task in registry:
-        assert task == {
-            "name": "test_task",
-            "func": "tests.test_registry.test_task",
-        }
+    registry.register(test_task, name="test_task")
+
+    # simulate both the new and legacy scheduled tasks already being in the db
+    baker.make(
+        "django_q.Schedule",
+        name="test_task - QREGISTRY",
+        func="tests.test_registry.test_task",
+    )
+    baker.make(
+        "django_q.Schedule",
+        name="test_task - CRON",
+        func="tests.test_registry.test_task",
+    )
+
+    assert Schedule.objects.count() == 2
+
+    registry.register_all()
+
+    assert Schedule.objects.count() == 1
+    assert Schedule.objects.first().name == "test_task - QREGISTRY"

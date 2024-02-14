@@ -8,6 +8,7 @@ from typing import Any
 from typing import Callable
 
 from django.conf import settings
+from django.db import models
 
 from django_q_registry.conf import app_settings
 
@@ -42,10 +43,6 @@ class TaskRegistry:
 
     def __post_init__(self):
         self._register_settings()
-
-    def __iter__(self):
-        for registered_task in self.registered_tasks:
-            yield registered_task.to_dict()
 
     def register(self, *args, **kwargs):
         """
@@ -156,24 +153,26 @@ class TaskRegistry:
         Create or update all registered tasks in the database, deleting any tasks that
         are no longer registered.
 
-        We make sure to suffix the name of the task with PERIODIC_TASK_SUFFIX (default: " - CRON")
+        We make sure to suffix the name of the task with PERIODIC_TASK_SUFFIX (default: " - QREGISTRY")
         so that we can easily identify which tasks are periodic tasks. This is useful to
         avoid accidentally deleting scheduled tasks that are not periodic tasks.
         """
         from django_q.models import Schedule
 
         suffix = app_settings.PERIODIC_TASK_SUFFIX
+        legacy_suffix = " - CRON"
 
         orm_tasks = []
-        for task in self:
+        for task in self.registered_tasks:
+            task_dict = task.to_dict()
             obj, _ = Schedule.objects.update_or_create(
-                name=f"{task.pop('name')}{suffix}",
-                defaults=task,
+                name=f"{task_dict.pop('name')}{suffix}",
+                defaults=task_dict,
             )
             orm_tasks.append(obj.pk)
 
         Schedule.objects.exclude(pk__in=orm_tasks).filter(
-            name__endswith=suffix
+            models.Q(name__endswith=legacy_suffix) | models.Q(name__endswith=suffix)
         ).delete()
 
 

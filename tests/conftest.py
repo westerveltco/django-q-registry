@@ -18,6 +18,7 @@ def pytest_configure(config):
 
 TEST_SETTINGS = {
     "INSTALLED_APPS": [
+        "django.contrib.contenttypes",
         "django_q",
         "django_q_registry",
     ],
