@@ -3,9 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [project]
-authors = [
-  {name = "Josh Thomas", email = "josh@joshthomas.dev"}
-]
+authors = [{name = "Josh Thomas", email = "josh@joshthomas.dev"}]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: Django",
@@ -24,10 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython"
 ]
-dependencies = [
-  "django>=3.2",
-  "django_q2>=1.4.3"
-]
+dependencies = ["django>=3.2", "django_q2>=1.4.3"]
 description = "A Django app to register periodic Django Q tasks."
 dynamic = ["version"]
 keywords = []
@@ -81,12 +76,8 @@ tag = false
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 
 [tool.bumpver.file_patterns]
-"src/django_q_registry/__init__.py" = [
-  '__version__ = "{version}"'
-]
-"tests/test_version.py" = [
-  'assert __version__ == "{version}"'
-]
+"src/django_q_registry/__init__.py" = ['__version__ = "{version}"']
+"tests/test_version.py" = ['assert __version__ == "{version}"']
 
 [tool.coverage.paths]
 source = ["src"]
@@ -103,10 +94,7 @@ exclude_lines = [
 fail_under = 75
 
 [tool.coverage.run]
-omit = [
-  "src/django_q_registry/migrations/*",
-  "tests/*"
-]
+omit = ["src/django_q_registry/migrations/*", "tests/*"]
 source = ["django_q_registry"]
 
 [tool.django-stubs]
@@ -117,10 +105,7 @@ strict_settings = false
 indent = 2
 
 [tool.hatch.build]
-exclude = [
-  ".*",
-  "Justfile"
-]
+exclude = [".*", "Justfile"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/django_q_registry"]
@@ -133,9 +118,7 @@ check_untyped_defs = true
 exclude = "docs/.*\\.py$"
 mypy_path = "src/"
 no_implicit_optional = true
-plugins = [
-  "mypy_django_plugin.main"
-]
+plugins = ["mypy_django_plugin.main"]
 warn_redundant_casts = true
 warn_unused_configs = true
 warn_unused_ignores = true
@@ -143,11 +126,7 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_errors = true
 ignore_missing_imports = true
-module = [
-  "django_q.*",
-  "django_q_registry.*.migrations.*",
-  "tests.*"
-]
+module = ["django_q.*", "django_q_registry.*.migrations.*", "tests.*"]
 
 [tool.mypy_django_plugin]
 ignore_missing_model_attributes = true
