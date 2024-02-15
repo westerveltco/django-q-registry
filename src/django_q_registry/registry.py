@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from typing import Callable
 
 from django.conf import settings
-from django.db import models
 
 from django_q_registry.conf import app_settings
 
@@ -34,7 +33,7 @@ class TaskRegistry:
 
         The name kwarg is optional, and will default to the name of the function if not provided.
 
-        Example::
+        Example:
 
             from django.core.mail import send_mail
             from django_q.models import Schedule
@@ -143,19 +142,11 @@ class TaskRegistry:
         """
         # imported here to avoid `AppRegistryNotReady` exception, since the `registry` is imported
         # and used in this app config's `ready` method
-        from django_q.models import Schedule
-
         from django_q_registry.models import Task
 
-        task_pks = Task.objects.register_tasks(self.registered_tasks)
-        Task.objects.exclude(pk__in=task_pks).unregister_tasks()
-
-        suffix = app_settings.PERIODIC_TASK_SUFFIX
-        legacy_suffix = " - CRON"
-
-        Schedule.objects.exclude(registered_task__pk__in=task_pks).filter(
-            models.Q(name__endswith=legacy_suffix) | models.Q(name__endswith=suffix)
-        ).delete()
+        registered_tasks = Task.objects.register(self.registered_tasks)
+        tasks_to_clean_up = Task.objects.exclude_registered(registered_tasks)
+        tasks_to_clean_up.unregister()
 
 
 registry = TaskRegistry()
