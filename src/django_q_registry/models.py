@@ -32,9 +32,10 @@ class TaskQuerySet(models.QuerySet):
                 `django_q.models.Schedule`.
             kwargs:
                 The keyword arguments to be passed to `django_q.models.Schedule` when creating a new `Schedule`
-                instance for the `Task` instance. Corresponds to the remaining fields in `django_q.models.Schedule`.
-                One special case is the `name` field that can be passed in here to specify the name of the `Task`
-                and `Schedule` instance. If not passed in, the `name` field will be set to the name of the `func`.
+                instance for the `Task` instance. Corresponds to the remaining fields in
+                `django_q.models.Schedule`. One special case is the `name` field that can be passed in here to
+                specify the name of the `Task` and `Schedule` instance. If not passed in, the `name` field
+                will be set to the name of the `func`.
 
                 Given the following `kwargs`:
 
@@ -128,15 +129,16 @@ class TaskQuerySet(models.QuerySet):
 
     def exclude_registered(self, registry: TaskRegistry) -> TaskQuerySet:
         """
-        Get all `Task` instances that are no longer registered in the `django_q_registry.registry.TaskRegistry`.
+        Get all `Task` instances that are no longer registered in the `TaskRegistry`.
 
-        This method will return all `Task` instances that are not contained in the `TaskRegistry.registered_tasks`
-        attribute, for use in cleaning up the database of any `Task` instances that are no longer registered.
+        This method will return all `Task` instances that are not contained in the
+        `TaskRegistry.registered_tasks` attribute, for use in cleaning up the database of any `Task`
+        instances that are no longer registered.
 
         Args:
             registry:
-                A TaskRegistry instance containing all of the `Task` instances that are currently registered and
-                in the database.
+                A TaskRegistry instance containing all of the `Task` instances that are currently registered
+                and in the database.
 
         Returns:
             A TaskQuerySet containing all of the `Task` instances that are no longer registered in the
@@ -149,14 +151,14 @@ class TaskQuerySet(models.QuerySet):
 
     def unregister(self) -> None:
         """
-        Delete all `Task` instances from the database and their associated `django_q.models.Schedule` instances.
+        Delete all `Task` instances from the database and the associated `django_q.models.Schedule` instances.
 
         This will operate on all `Task` instances contained in the QuerySet, so be sure to filter the QuerySet
-        before calling this method to only contain the `Task` instances that you want to unregister a.k.a. delete
-        from the database.
+        before calling this method to only contain the `Task` instances that you want to unregister a.k.a.
+        delete from the database.
 
-        This method will also delete any dangling `django_q.models.Schedule` instances that are no longer associated
-        with any `Task` instances.
+        This method will also delete any dangling `django_q.models.Schedule` instances that are no longer
+        associated with any `Task` instances.
         """
 
         q_schedule_pks = self.values_list("q_schedule", flat=True)

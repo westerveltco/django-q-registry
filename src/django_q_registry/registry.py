@@ -28,8 +28,8 @@ class TaskRegistry:
         """
         Register a task to be run periodically. Can be used as a function or a decorator.
 
-        This is essentially the same as `django_q.tasks.schedule` but with the added benefit of
-        being able to use it as a decorator while also having a registry of all registered tasks.
+        This is essentially the same as `django_q.tasks.schedule` but with the added benefit of being able to
+        use it as a decorator while also having a registry of all registered tasks.
 
         If used as a function, the first argument must be the function to be registered.
 
@@ -100,13 +100,13 @@ class TaskRegistry:
 
     def _register_task(self, func: Callable[..., Any] | str, **kwargs):
         """
-        Register a task to the `registered_tasks` class attribute and return the function. Do not
-        create the `Task` object in the database yet, to avoid the database being hit on
-        registration -- plus the potential for the app registry not being ready yet.
+        Register a task to the `registered_tasks` class attribute and return the function. Do not create the
+        `Task` object in the database yet, to avoid the database being hit on registration -- plus the
+        potential for the app registry not being ready yet.
 
-        The actual `Task` object will be persisted to the database, either created or updated, in
-        the `register_all` method which is meant to be manually run as part of the
-        `setup_periodic_tasks` management command.
+        The actual `Task` object will be persisted to the database, either created or updated, in the
+        `register_all` method which is meant to be manually run as part of the `setup_periodic_tasks`
+        management command.
         """
         # imported here to avoid `AppRegistryNotReady` exception, since the `registry` is imported
         # and used in this app config's `ready` method
@@ -146,8 +146,8 @@ class TaskRegistry:
 
     def register_all(self):
         """
-        Create or update all registered tasks in the database, deleting any tasks that
-        are no longer registered.
+        Create or update all registered tasks in the database, deleting any tasks that are no longer
+        registered.
         """
         # imported here to avoid `AppRegistryNotReady` exception, since the `registry` is imported
         # and used in this app config's `ready` method
