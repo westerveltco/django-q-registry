@@ -77,7 +77,7 @@ class TestTaskQuerySet:
                 "django_q_registry.Task",
                 name="test_foo",
                 func="tests.test_models.test_foo",
-                kwargs={"kwargs": {"baz": "qux"}},
+                kwargs={"kwargs": {"foo": "bar"}},
             )
         )
         tasks.append(
