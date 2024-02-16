@@ -26,6 +26,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - Now using [`django-twc-package`](https://github.com/westerveltco/django-twc-package) template for repository and package structure.
 - The default for the `Q_REGISTRY["PERIOIDIC_TASK_SUFFIX"]` app setting has been changed from `"- CRON"` to `"- QREGISTRY"`.
 - All database logic has been moved from the `TaskRegistry` to the `setup_periodic_tasks` management command.
+- GitHub Actions `test` workflow now uses the output of `nox -l --json` to dynamically generate the test matrix.
 
 ### Fixed
 
