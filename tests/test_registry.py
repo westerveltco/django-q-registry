@@ -5,6 +5,7 @@ from django.test import override_settings
 from django_q.models import Schedule
 from model_bakery import baker
 
+from django_q_registry.models import Task
 from django_q_registry.registry import TaskRegistry
 
 
@@ -60,6 +61,21 @@ def test_function_is_callable(registry):
     assert test_task() == "test"
 
 
+def test_function_is_not_callable_or_string(registry):
+    with pytest.raises(TypeError):
+        registry._register_task(func=5)
+
+
+def test_function_string_is_not_formatted_correctly(registry):
+    with pytest.raises(ImportError):
+        registry._register_task(func="test_task")
+
+
+def test_function_str_is_not_callable(registry):
+    with pytest.raises(ImportError):
+        registry._register_task(func="tests.test_task")
+
+
 def test_function_is_callable_with_args(registry):
     @registry.register(name="test_task")
     def test_task(arg):
@@ -84,7 +100,7 @@ def test_register_no_name(registry):
     tasks = list(registry.registered_tasks)
 
     assert len(tasks) == 1
-    assert tasks[0].to_dict()["name"] == "test_task"
+    assert tasks[0].name == "test_task"
 
 
 @pytest.mark.django_db
@@ -96,11 +112,15 @@ def test_register_all_legacy_suffix(registry):
     registry.register(test_task, name="test_task")
 
     # simulate both the new and legacy scheduled tasks already being in the db
-    baker.make(
+    schedule = baker.make(
         "django_q.Schedule",
         name="test_task - QREGISTRY",
         func="tests.test_registry.test_task",
     )
+    registry.registered_tasks.add(
+        baker.make("django_q_registry.Task", q_schedule=schedule)
+    )
+
     baker.make(
         "django_q.Schedule",
         name="test_task - CRON",
@@ -109,7 +129,8 @@ def test_register_all_legacy_suffix(registry):
 
     assert Schedule.objects.count() == 2
 
-    registry.register_all()
+    Task.objects.create_from_registry(registry)
+    Task.objects.delete_dangling_objects(registry)
 
     assert Schedule.objects.count() == 1
     assert Schedule.objects.first().name == "test_task - QREGISTRY"

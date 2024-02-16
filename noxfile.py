@@ -71,7 +71,7 @@ def tests(session, django):
     else:
         session.install(f"django=={django}")
 
-    session.run("python", "-m", "pytest")
+    session.run("python", "-m", "pytest", *session.posargs if session.posargs else "")
 
 
 @nox.session

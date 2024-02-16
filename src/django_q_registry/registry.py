@@ -4,37 +4,17 @@ import importlib
 from dataclasses import dataclass
 from dataclasses import field
 from functools import wraps
+from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
+from typing import cast
 
 from django.conf import settings
-from django.db import models
 
 from django_q_registry.conf import app_settings
 
-
-@dataclass
-class Task:
-    name: str
-    func: str
-    kwargs: dict[str, Any] = field(default_factory=dict)
-
-    def __hash__(self) -> int:
-        return hash((self.name, self.func, tuple(self.kwargs.items())))
-
-    def __eq__(self, other) -> bool:
-        return (
-            self.name == other.name
-            and self.func == other.func
-            and self.kwargs == other.kwargs
-        )
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "name": self.name,
-            "func": self.func,
-            **self.kwargs,
-        }
+if TYPE_CHECKING:
+    from django_q_registry.models import Task
 
 
 @dataclass
@@ -48,19 +28,20 @@ class TaskRegistry:
         """
         Register a task to be run periodically. Can be used as a function or a decorator.
 
-        This is essentially the same as `django_q.tasks.schedule` but with the added benefit of
-        being able to use it as a decorator while also having a registry of all registered tasks.
+        This is essentially the same as `django_q.tasks.schedule` but with the added benefit of being able to
+        use it as a decorator while also having a registry of all registered tasks.
 
         If used as a function, the first argument must be the function to be registered.
 
         The name kwarg is optional, and will default to the name of the function if not provided.
 
-        Example::
+        Example:
 
             from django.core.mail import send_mail
             from django_q.models import Schedule
 
-            from cms.tasks.registry import TaskRegistry
+            from django_q_registry.registry import TaskRegistry
+
 
             registry = TaskRegistry()
             @registry.register(
@@ -117,21 +98,36 @@ class TaskRegistry:
                 **task_dict,
             )
 
-    def _register_task(self, func: Callable | str, **kwargs):
-        if isinstance(func, str):
-            module_path, function_name = func.rsplit(".", 1)
-            module = importlib.import_module(module_path)
-            func = getattr(module, function_name)
-        if not callable(func):
-            msg = f"{func} is not callable."
+    def _register_task(self, func: Callable[..., Any] | str, **kwargs):
+        """
+        Register a task to the `registered_tasks` class attribute and return the function. Do not create the
+        `Task` object in the database yet, to avoid the database being hit on registration -- plus the
+        potential for the app registry not being ready yet.
+
+        The actual `Task` object will be persisted to the database, either created or updated, in the
+        `register_all` method which is meant to be manually run as part of the `setup_periodic_tasks`
+        management command.
+        """
+        # imported here to avoid `AppRegistryNotReady` exception, since the `registry` is imported
+        # and used in this app config's `ready` method
+        from django_q_registry.models import Task
+
+        if not callable(func) and not isinstance(func, str):
+            msg = f"{func} is not a string or callable."
             raise TypeError(msg)
-        self.registered_tasks.add(
-            Task(
-                name=kwargs.pop("name", func.__name__),
-                func=f"{func.__module__}.{func.__name__}",
-                kwargs=kwargs,
-            )
-        )
+
+        if isinstance(func, str):
+            try:
+                module_path, function_name = func.rsplit(".", 1)
+                module = importlib.import_module(module_path)
+                func = getattr(module, function_name)
+            except (AttributeError, ImportError, ValueError) as err:
+                raise ImportError(f"Could not import {func}.") from err
+
+        # make mypy happy
+        func = cast(Callable[..., Any], func)
+
+        self.registered_tasks.add(Task.objects.create_in_memory(func, kwargs))
 
         return func
 
@@ -147,33 +143,6 @@ class TaskRegistry:
                 importlib.import_module(tasks_module)
             except ImportError:
                 continue
-
-    def register_all(self):
-        """
-        Create or update all registered tasks in the database, deleting any tasks that
-        are no longer registered.
-
-        We make sure to suffix the name of the task with PERIODIC_TASK_SUFFIX (default: " - QREGISTRY")
-        so that we can easily identify which tasks are periodic tasks. This is useful to
-        avoid accidentally deleting scheduled tasks that are not periodic tasks.
-        """
-        from django_q.models import Schedule
-
-        suffix = app_settings.PERIODIC_TASK_SUFFIX
-        legacy_suffix = " - CRON"
-
-        orm_tasks = []
-        for task in self.registered_tasks:
-            task_dict = task.to_dict()
-            obj, _ = Schedule.objects.update_or_create(
-                name=f"{task_dict.pop('name')}{suffix}",
-                defaults=task_dict,
-            )
-            orm_tasks.append(obj.pk)
-
-        Schedule.objects.exclude(pk__in=orm_tasks).filter(
-            models.Q(name__endswith=legacy_suffix) | models.Q(name__endswith=suffix)
-        ).delete()
 
 
 registry = TaskRegistry()

@@ -51,7 +51,14 @@ manage *COMMAND:
             "forget to activate a virtual environment?"
         ) from exc
 
-    settings.configure(INSTALLED_APPS=["django_q_registry"])
+    settings.configure(
+        INSTALLED_APPS=[
+            "django.contrib.contenttypes",
+            "django_q",
+            "django_q_registry"
+        ],
+        SECRET_KEY="not needed",
+    )
     execute_from_command_line(sys.argv + "{{ COMMAND }}".split(" "))
 
 alias mm := makemigrations
