@@ -38,7 +38,8 @@ class TaskRegistry:
             from django.core.mail import send_mail
             from django_q.models import Schedule
 
-            from cms.tasks.registry import TaskRegistry
+            from django_q_registry.registry import TaskRegistry
+
 
             registry = TaskRegistry()
             @registry.register(
