@@ -134,3 +134,48 @@ def test_register_all_legacy_suffix(registry):
 
     assert Schedule.objects.count() == 1
     assert Schedule.objects.first().name == "test_task - QREGISTRY"
+
+
+def test_issue_6_regression(registry):
+    # https://github.com/westerveltco/django-q-registry/issues/6
+    from django.core.mail import send_mail
+    from django.utils import timezone
+
+    base_kwargs = {
+        "from_email": "from@example.com",
+        "recipient_list": ["to@example.com"],
+    }
+    now = timezone.now()
+
+    registry.register(
+        send_mail,
+        name="Send periodic test email",
+        next_run=now,
+        schedule_type=Schedule.MINUTES,
+        minutes=5,
+        kwargs={
+            "subject": "Test email from reminders",
+            "message": "This is a test email.",
+            **base_kwargs,
+        },
+    )
+
+    assert len(registry.registered_tasks) == 1
+
+    task = list(registry.registered_tasks)[0]
+
+    assert task == Task(
+        name="Send periodic test email",
+        func="django.core.mail.send_mail",
+        kwargs={
+            "next_run": now,
+            "schedule_type": Schedule.MINUTES,
+            "minutes": 5,
+            "kwargs": {
+                "subject": "Test email from reminders",
+                "message": "This is a test email.",
+                "from_email": "from@example.com",
+                "recipient_list": ["to@example.com"],
+            },
+        },
+    )
