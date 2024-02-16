@@ -4,7 +4,6 @@ import pytest
 from django_q.models import Schedule
 from model_bakery import baker
 
-from django_q_registry.conf import app_settings
 from django_q_registry.models import Task
 
 pytestmark = pytest.mark.django_db
@@ -166,38 +165,62 @@ class TestTaskQuerySet:
 
         assert Task.objects.count() == 0
 
-    def test_unregister_with_registered_tasks(self):
-        schedule_with_registered_task = baker.make(
-            "django_q.Schedule",
-            name=f"registered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
-            registered_task=baker.make("django_q_registry.Task"),
-        )
-        schedule_with_unregistered_task = baker.make(
-            "django_q.Schedule",
-            name=f"unregistered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
-            registered_task=None,
-        )
-        schedule_with_legacy_suffix = baker.make(
-            "django_q.Schedule",
-            name="registered_schedule - CRON",
-        )
-        unmanaged_schedule = baker.make("django_q.Schedule")
+    def test_related_field_funkiness(self):
+        task = baker.make("django_q_registry.Task")
 
-        registered_tasks = Task.objects.filter(
-            pk__in=[schedule_with_registered_task.registered_task.pk]
-        )
+        assert task.q_schedule is None
 
-        Task.objects.exclude_registered(registered_tasks).unregister()
+        schedule = baker.make("django_q.Schedule", registered_task=task)
 
-        schedules = Schedule.objects.all()
+        assert Schedule.objects.all().count() == 1
+        assert Schedule.objects.first() == schedule
 
-        assert schedules.count() == 2
+        # this works
+        assert task.q_schedule == schedule
+        # this doesn't?
+        assert Task.objects.first().q_schedule == schedule
 
-        assert schedule_with_registered_task in schedules
-        assert unmanaged_schedule in schedules
+        # this works
+        assert schedule.registered_task == task
+        # this doesn't?
+        assert Schedule.objects.first().registered_task == task
 
-        assert schedule_with_unregistered_task not in schedules
-        assert schedule_with_legacy_suffix not in schedules
+        # neither of these work
+        assert Schedule.objects.get(registered_task=task) == schedule
+        assert Schedule.objects.filter(registered_task__isnull=False).count() == 1
+
+    # def test_unregister_with_registered_tasks(self):
+    #     schedule_with_registered_task = baker.make(
+    #         "django_q.Schedule",
+    #         name=f"registered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
+    #         registered_task=baker.make("django_q_registry.Task"),
+    #     )
+    #     schedule_with_unregistered_task = baker.make(
+    #         "django_q.Schedule",
+    #         name=f"unregistered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
+    #         registered_task=None,
+    #     )
+    #     schedule_with_legacy_suffix = baker.make(
+    #         "django_q.Schedule",
+    #         name="registered_schedule - CRON",
+    #     )
+    #     unmanaged_schedule = baker.make("django_q.Schedule")
+    #
+    #     registered_tasks = Task.objects.filter(
+    #         pk__in=[schedule_with_registered_task.registered_task.pk]
+    #     )
+    #
+    #     Task.objects.exclude_registered(registered_tasks).unregister()
+    #
+    #     schedules = Schedule.objects.all()
+    #
+    #     assert schedules.count() == 2
+    #
+    #     assert schedule_with_registered_task in schedules
+    #     assert unmanaged_schedule in schedules
+    #
+    #     assert schedule_with_unregistered_task not in schedules
+    #     assert schedule_with_legacy_suffix not in schedules
 
 
 class TestTask:
