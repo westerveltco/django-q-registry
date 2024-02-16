@@ -5,6 +5,7 @@ import logging
 from typing import Any
 from typing import Callable
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django_q.models import Schedule
 
@@ -193,7 +194,13 @@ class Task(models.Model):
     def __hash__(self) -> int:
         if self.pk is not None:
             return super().__hash__()
-        return hash((self.name, self.func, tuple(json.dumps(self.kwargs))))
+        return hash(
+            (
+                self.name,
+                self.func,
+                tuple(json.dumps(self.kwargs, cls=DjangoJSONEncoder)),
+            )
+        )
 
     def __eq__(self, other) -> bool:
         """
