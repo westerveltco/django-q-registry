@@ -60,6 +60,21 @@ def test_function_is_callable(registry):
     assert test_task() == "test"
 
 
+def test_function_is_not_callable_or_string(registry):
+    with pytest.raises(TypeError):
+        registry._register_task(func=5)
+
+
+def test_function_string_is_not_formatted_correctly(registry):
+    with pytest.raises(ImportError):
+        registry._register_task(func="test_task")
+
+
+def test_function_str_is_not_callable(registry):
+    with pytest.raises(ImportError):
+        registry._register_task(func="tests.test_task")
+
+
 def test_function_is_callable_with_args(registry):
     @registry.register(name="test_task")
     def test_task(arg):

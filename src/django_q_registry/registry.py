@@ -110,14 +110,17 @@ class TaskRegistry:
         # and used in this app config's `ready` method
         from django_q_registry.models import Task
 
-        if isinstance(func, str):
-            module_path, function_name = func.rsplit(".", 1)
-            module = importlib.import_module(module_path)
-            func = getattr(module, function_name)
-
-        if not callable(func):
-            msg = f"{func} is not callable."
+        if not isinstance(func, (str, Callable)):
+            msg = f"{func} is not a string or callable."
             raise TypeError(msg)
+
+        if isinstance(func, str):
+            try:
+                module_path, function_name = func.rsplit(".", 1)
+                module = importlib.import_module(module_path)
+                func = getattr(module, function_name)
+            except (AttributeError, ImportError, ValueError) as err:
+                raise ImportError(f"Could not import {func}.") from err
 
         self.registered_tasks.add(Task.objects.create_in_memory(func, kwargs))
 
