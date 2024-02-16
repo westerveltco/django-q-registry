@@ -153,8 +153,8 @@ class TaskRegistry:
         # and used in this app config's `ready` method
         from django_q_registry.models import Task
 
-        registered_tasks = Task.objects.register(self.registered_tasks)
-        tasks_to_clean_up = Task.objects.exclude_registered(registered_tasks)
+        Task.objects.register(self)
+        tasks_to_clean_up = Task.objects.exclude_registered(self)
         tasks_to_clean_up.unregister()
 
 

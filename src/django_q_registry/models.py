@@ -4,12 +4,12 @@ import json
 import logging
 from typing import Any
 from typing import Callable
-from typing import Iterable
 
 from django.db import models
 from django_q.models import Schedule
 
 from django_q_registry.conf import app_settings
+from django_q_registry.registry import TaskRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -28,20 +28,42 @@ class TaskQuerySet(models.QuerySet):
 
         Args:
             func:
-              The function to be called when the task is executed. Corresponds to the `func` argument in
-              `django_q.models.Schedule`.
+                The function to be called when the task is executed. Corresponds to the `func` argument in
+                `django_q.models.Schedule`.
             kwargs:
-              The keyword arguments to be passed to `django_q.models.Schedule` when creating a new `Schedule`
-              instance for the `Task` instance. Corresponds to the remaining fields in `django_q.models.Schedule`.
-              One special case is the `name` field that can be passed in here to specify the name of the `Task`
-              and `Schedule` instance. If not passed in, the `name` field will be set to the name of the `func`.
+                The keyword arguments to be passed to `django_q.models.Schedule` when creating a new `Schedule`
+                instance for the `Task` instance. Corresponds to the remaining fields in `django_q.models.Schedule`.
+                One special case is the `name` field that can be passed in here to specify the name of the `Task`
+                and `Schedule` instance. If not passed in, the `name` field will be set to the name of the `func`.
 
-              {
-                "name": "my_task",
-                "repeats": 1,
-                "schedule_type": "D",
-                # ...
-              }
+                Given the following `kwargs`:
+
+                {
+                    "name": "my_task",
+                    "repeats": 1,
+                    "schedule_type": "D",
+                    # ...
+                }
+
+                Would result in the following `Task`:`
+
+                Task(
+                    name="my_task",
+                    func="...",
+                    kwargs={
+                        "repeats": 1,
+                        "schedule_type": "D",
+                    },
+                )
+
+                Which would then result in the following `Schedule`, once the `Task` is saved to the database:
+
+                Schedule(
+                    name="my_task",
+                    func="...",
+                    repeats=1,
+                    schedule_type="D",
+                )
 
         Returns:
             A new `Task` instance with no primary key, to be used later within the
@@ -54,9 +76,9 @@ class TaskQuerySet(models.QuerySet):
             kwargs=kwargs,
         )
 
-    def register(self, tasks: Iterable[Task]) -> TaskQuerySet:
+    def register(self, registry: TaskRegistry) -> TaskQuerySet:
         """
-        Given a list of in-memory `Task` instances, register them to the database.
+        Given a list of in-memory `Task` instances, save them to the database.
 
         Note that this method operates on `Task` instances that only exist in memory and do not exist in the
         database yet. If a `Task` instance is passed in that already exists, it will be logged as an error
@@ -69,17 +91,17 @@ class TaskQuerySet(models.QuerySet):
         will be created. See `Task.__eq__` for more information.
 
         Args:
-            tasks:
-              An iterable of `Task` instances to register to the database. These instances must not already
-              exist in the database.
+            registry:
+                A TaskRegistry instance containing all of the `Task` instances that are currently registered
+                in memory, but not yet in the database.
 
         Returns:
-            A TaskQuerySet containing all of the `Task` instances that were registered to the database.
+            A TaskQuerySet containing all of the `Task` instances that were saved to the database.
         """
 
-        registered_tasks = []
+        task_objs = []
 
-        for task in tasks:
+        for task in registry.registered_tasks:
             if task.pk:
                 logger.error(f"Task {task.pk} has already been registered")
                 continue
@@ -100,21 +122,21 @@ class TaskQuerySet(models.QuerySet):
                     **task.to_schedule_dict(),
                 )
 
-            registered_tasks.append(obj)
+            task_objs.append(obj)
 
-        return self.filter(pk__in=[task.pk for task in registered_tasks])
+        return self.filter(pk__in=[task.pk for task in task_objs])
 
-    def exclude_registered(self, registered_tasks: TaskQuerySet) -> TaskQuerySet:
+    def exclude_registered(self, registry: TaskRegistry) -> TaskQuerySet:
         """
         Get all `Task` instances that are no longer registered in the `django_q_registry.registry.TaskRegistry`.
 
-        This method will return all `Task` instances that are not contained in the `registered_tasks` QuerySet,
-        for use in cleaning up the database of any `Task` instances that are no longer registered.
+        This method will return all `Task` instances that are not contained in the `TaskRegistry.registered_tasks`
+        attribute, for use in cleaning up the database of any `Task` instances that are no longer registered.
 
         Args:
-            registered_tasks:
-              A TaskQuerySet containing all of the `Task` instances that are currently registered in the
-              `TaskRegistry`.
+            registry:
+                A TaskRegistry instance containing all of the `Task` instances that are currently registered and
+                in the database.
 
         Returns:
             A TaskQuerySet containing all of the `Task` instances that are no longer registered in the
@@ -122,7 +144,7 @@ class TaskQuerySet(models.QuerySet):
         """
 
         return self.exclude(
-            pk__in=registered_tasks.values_list("pk", flat=True),
+            pk__in=[task.pk for task in registry.registered_tasks],
         )
 
     def unregister(self) -> None:

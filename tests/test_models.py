@@ -6,6 +6,7 @@ from model_bakery import baker
 
 from django_q_registry.conf import app_settings
 from django_q_registry.models import Task
+from django_q_registry.registry import TaskRegistry
 
 pytestmark = pytest.mark.django_db
 
@@ -117,24 +118,28 @@ class TestTaskQuerySet:
             ]
         )
 
-        registered_tasks = Task.objects.register(tasks)
+        registry = TaskRegistry(registered_tasks=set(tasks))
+
+        registered_tasks = Task.objects.register(registry)
 
         assert len(registered_tasks) == 9
 
     def test_register_existing_task(self, caplog):
         existing_task = baker.make("django_q_registry.Task")
+        registry = TaskRegistry(registered_tasks=set([existing_task]))
 
         with caplog.at_level("ERROR"):
-            Task.objects.register([existing_task])
+            Task.objects.register(registry)
 
         assert f"Task {existing_task.pk} has already been registered" in caplog.text
 
     def test_register_existing_task_with_new_task(self, caplog):
         new_task = baker.prepare("django_q_registry.Task", name="new_task")
         existing_task = baker.make("django_q_registry.Task", name="existing_task")
+        registry = TaskRegistry(registered_tasks=set([new_task, existing_task]))
 
         with caplog.at_level("ERROR"):
-            Task.objects.register([new_task, existing_task])
+            Task.objects.register(registry)
 
         assert Task.objects.count() == 2
         assert Task.objects.filter(name=new_task.name).exists()
@@ -145,7 +150,9 @@ class TestTaskQuerySet:
 
         assert Schedule.objects.count() == 0
 
-        registered_tasks = Task.objects.register(tasks)
+        registry = TaskRegistry(registered_tasks=set(tasks))
+
+        registered_tasks = Task.objects.register(registry)
 
         assert (
             Schedule.objects.filter(
@@ -157,8 +164,9 @@ class TestTaskQuerySet:
     def test_register_schedule_update(self):
         schedule = baker.make("django_q.Schedule")
         task = baker.prepare("django_q_registry.Task", q_schedule=schedule)
+        registry = TaskRegistry(registered_tasks=set([task]))
 
-        registered_tasks = Task.objects.register([task])
+        registered_tasks = Task.objects.register(registry)
 
         assert (
             Schedule.objects.filter(
@@ -168,20 +176,24 @@ class TestTaskQuerySet:
         )
 
     def test_exclude_registered(self):
-        tasks = baker.make("django_q_registry.Task", _quantity=3)
+        registry = TaskRegistry(
+            registered_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
+        )
 
-        registered_tasks = Task.objects.filter(pk__in=[task.pk for task in tasks])
-        unregistered_tasks = Task.objects.exclude_registered(registered_tasks)
+        excluded_tasks = Task.objects.exclude_registered(registry)
 
-        assert unregistered_tasks.count() == 0
+        assert excluded_tasks.count() == 0
 
     def test_exclude_registered_with_unregistered_tasks(self):
-        tasks = baker.make("django_q_registry.Task", _quantity=3)
+        registry = TaskRegistry(
+            registered_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
+        )
+        unregistered_tasks = baker.make("django_q_registry.Task", _quantity=3)
 
-        registered_tasks = Task.objects.filter(pk__in=[tasks[0].pk])
-        unregistered_tasks = Task.objects.exclude_registered(registered_tasks)
+        excluded_tasks = Task.objects.exclude_registered(registry)
 
-        assert unregistered_tasks.count() == 2
+        assert excluded_tasks.count() == 3
+        assert all(task in unregistered_tasks for task in excluded_tasks)
 
     def test_unregister(self):
         baker.make(
@@ -216,11 +228,15 @@ class TestTaskQuerySet:
 
         unmanaged_schedule = baker.make("django_q.Schedule")
 
-        registered_tasks = Task.objects.filter(
-            pk__in=[schedule_with_registered_task.registered_task.pk]
+        registry = TaskRegistry(
+            registered_tasks=set(
+                Task.objects.filter(
+                    pk__in=[schedule_with_registered_task.registered_task.pk]
+                )
+            )
         )
 
-        Task.objects.exclude_registered(registered_tasks).unregister()
+        Task.objects.exclude_registered(registry).unregister()
 
         schedules = Schedule.objects.all()
 

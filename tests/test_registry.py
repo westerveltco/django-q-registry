@@ -111,11 +111,15 @@ def test_register_all_legacy_suffix(registry):
     registry.register(test_task, name="test_task")
 
     # simulate both the new and legacy scheduled tasks already being in the db
-    baker.make(
+    schedule = baker.make(
         "django_q.Schedule",
         name="test_task - QREGISTRY",
         func="tests.test_registry.test_task",
     )
+    registry.registered_tasks.add(
+        baker.make("django_q_registry.Task", q_schedule=schedule)
+    )
+
     baker.make(
         "django_q.Schedule",
         name="test_task - CRON",
