@@ -42,8 +42,8 @@ class TaskQuerySet(models.QuerySet):
               }
 
         Returns:
-            A new `Task` instance with no primary key, to be used later within the `django_q_registry.registry.TaskRegistry`
-            to actually create the `Task` instance in the database.
+            A new `Task` instance with no primary key, to be used later within the
+            `django_q_registry.registry.TaskRegistry` to actually create the `Task` instance in the database.
         """
 
         return Task(
