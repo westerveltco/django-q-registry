@@ -20,6 +20,11 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+
+      - uses: wntrblm/nox@main
+        with:
+          python-versions: "3.8"
+
       - id: set-matrix
         run: |
           echo "matrix=$(nox -l --json \
