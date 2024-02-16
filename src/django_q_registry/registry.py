@@ -144,18 +144,6 @@ class TaskRegistry:
             except ImportError:
                 continue
 
-    def register_all(self):
-        """
-        Create or update all registered tasks in the database, deleting any tasks that are no longer
-        registered.
-        """
-        # imported here to avoid `AppRegistryNotReady` exception, since the `registry` is imported
-        # and used in this app config's `ready` method
-        from django_q_registry.models import Task
-
-        Task.objects.create_from_registry(self)
-        Task.objects.delete_dangling_objects(self)
-
 
 registry = TaskRegistry()
 register_task = registry.register

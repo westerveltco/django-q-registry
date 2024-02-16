@@ -5,6 +5,7 @@ from django.test import override_settings
 from django_q.models import Schedule
 from model_bakery import baker
 
+from django_q_registry.models import Task
 from django_q_registry.registry import TaskRegistry
 
 
@@ -128,7 +129,8 @@ def test_register_all_legacy_suffix(registry):
 
     assert Schedule.objects.count() == 2
 
-    registry.register_all()
+    Task.objects.create_from_registry(registry)
+    Task.objects.delete_dangling_objects(registry)
 
     assert Schedule.objects.count() == 1
     assert Schedule.objects.first().name == "test_task - QREGISTRY"
