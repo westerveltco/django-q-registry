@@ -17,6 +17,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 -->
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Added
 
 - Refactored the `django_q_registry.registry.Task` dataclass into a `django_q_registry.models.Task` Django model. This should make it more flexible and robust for registering tasks and the associated `django_q.models.Schedule` instances.
@@ -51,5 +53,7 @@ Initial release!
 
 - Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.2.0...HEAD
 [0.1.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.1.0
+
+[0.2.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.0
