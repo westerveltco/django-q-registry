@@ -17,6 +17,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 -->
 ## [Unreleased]
 
+### Added
+
+- Refactored the `django_q_registry.registry.Task` dataclass into a `django_q_registry.models.Task` Django model. This should make it more flexible and robust for registering tasks and the associated `django_q.models.Schedule` instances.
+
 ### Changed
 
 - Now using [`django-twc-package`](https://github.com/westerveltco/django-twc-package) template for repository and package structure.
@@ -32,8 +36,8 @@ Initial release!
 - Initial tests.
 - Initial CI/CD (GitHub Actions).
 - A registry for Django Q2 periodic tasks.
-    - `registry.register` function for registering periodic tasks with a convenience decorator `register_task`.
-    - A `TASKS` setting for registering periodic tasks from Django settings.
+  - `registry.register` function for registering periodic tasks with a convenience decorator `register_task`.
+  - A `TASKS` setting for registering periodic tasks from Django settings.
 - Autodiscovery of periodic tasks from a Django project's `tasks.py` files.
 - A `setup_periodic_tasks` management command for setting up periodic tasks in the Django Q2 broker.
 
