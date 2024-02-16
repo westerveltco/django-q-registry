@@ -76,6 +76,7 @@ tag = false
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 
 [tool.bumpver.file_patterns]
+".copier/package.yml" = ['current_version: {version}']
 "src/django_q_registry/__init__.py" = ['__version__ = "{version}"']
 "tests/test_version.py" = ['assert __version__ == "{version}"']
 
