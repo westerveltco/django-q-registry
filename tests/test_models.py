@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import itertools
+
 import pytest
 from django_q.models import Schedule
 from model_bakery import baker
@@ -47,7 +49,7 @@ class TestTaskQuerySet:
 
         assert in_memory_task.name == "test_task"
 
-    def test_register(self):
+    def test_create_from_registry(self):
         def test_task():
             pass
 
@@ -120,7 +122,7 @@ class TestTaskQuerySet:
 
         registry = TaskRegistry(registered_tasks=set(tasks))
 
-        registered_tasks = Task.objects.register(registry)
+        registered_tasks = Task.objects.create_from_registry(registry)
 
         assert len(registered_tasks) == 9
 
@@ -129,7 +131,7 @@ class TestTaskQuerySet:
         registry = TaskRegistry(registered_tasks=set([existing_task]))
 
         with caplog.at_level("ERROR"):
-            Task.objects.register(registry)
+            Task.objects.create_from_registry(registry)
 
         assert f"Task {existing_task.pk} has already been registered" in caplog.text
 
@@ -139,7 +141,7 @@ class TestTaskQuerySet:
         registry = TaskRegistry(registered_tasks=set([new_task, existing_task]))
 
         with caplog.at_level("ERROR"):
-            Task.objects.register(registry)
+            Task.objects.create_from_registry(registry)
 
         assert Task.objects.count() == 2
         assert Task.objects.filter(name=new_task.name).exists()
@@ -152,7 +154,7 @@ class TestTaskQuerySet:
 
         registry = TaskRegistry(registered_tasks=set(tasks))
 
-        registered_tasks = Task.objects.register(registry)
+        registered_tasks = Task.objects.create_from_registry(registry)
 
         assert (
             Schedule.objects.filter(
@@ -166,7 +168,7 @@ class TestTaskQuerySet:
         task = baker.prepare("django_q_registry.Task", q_schedule=schedule)
         registry = TaskRegistry(registered_tasks=set([task]))
 
-        registered_tasks = Task.objects.register(registry)
+        registered_tasks = Task.objects.create_from_registry(registry)
 
         assert (
             Schedule.objects.filter(
@@ -195,58 +197,69 @@ class TestTaskQuerySet:
         assert excluded_tasks.count() == 3
         assert all(task in unregistered_tasks for task in excluded_tasks)
 
-    def test_unregister(self):
-        baker.make(
-            "django_q.Schedule",
-            registered_task=baker.make("django_q_registry.Task"),
-            _quantity=3,
-        )
-
-        Task.objects.unregister()
-
-        assert Task.objects.count() == 0
-
-    def test_unregister_with_registered_tasks(self):
-        schedule_with_registered_task = baker.make(
-            "django_q.Schedule",
-            name=f"registered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
-        )
-        baker.make(
-            "django_q_registry.Task",
-            q_schedule=schedule_with_registered_task,
-        )
-
-        schedule_with_unregistered_task = baker.make(
-            "django_q.Schedule",
-            name=f"unregistered_schedule{app_settings.PERIODIC_TASK_SUFFIX}",
-        )
-
-        schedule_with_legacy_suffix = baker.make(
-            "django_q.Schedule",
-            name="registered_schedule - CRON",
-        )
-
-        unmanaged_schedule = baker.make("django_q.Schedule")
-
+    def test_delete_dangling_objects_tasks(self):
+        schedules = baker.make("django_q.Schedule", _quantity=3)
         registry = TaskRegistry(
             registered_tasks=set(
-                Task.objects.filter(
-                    pk__in=[schedule_with_registered_task.registered_task.pk]
+                baker.make(
+                    "django_q_registry.Task",
+                    q_schedule=itertools.cycle(schedules),
+                    _quantity=len(schedules),
                 )
             )
         )
+        baker.make("django_q_registry.Task", _quantity=3)
 
-        Task.objects.exclude_registered(registry).unregister()
+        Task.objects.delete_dangling_objects(registry)
 
-        schedules = Schedule.objects.all()
+        assert Task.objects.count() == len(schedules)
 
-        assert schedules.count() == 2
+    def test_delete_dangling_objects_schedules(self):
+        schedules = baker.make("django_q.Schedule", _quantity=3)
+        registry = TaskRegistry(
+            registered_tasks=set(
+                baker.make(
+                    "django_q_registry.Task",
+                    q_schedule=itertools.cycle(schedules),
+                    _quantity=len(schedules),
+                )
+            )
+        )
+        baker.make(
+            "django_q.Schedule",
+            name=itertools.cycle(
+                [
+                    f"dangling_schedule{i}{app_settings.PERIODIC_TASK_SUFFIX}"
+                    for i in range(3)
+                ]
+            ),
+            _quantity=3,
+        )
 
-        assert schedule_with_registered_task in schedules
-        assert unmanaged_schedule in schedules
+        Task.objects.delete_dangling_objects(registry)
 
-        assert schedule_with_unregistered_task not in schedules
-        assert schedule_with_legacy_suffix not in schedules
+        assert Schedule.objects.count() == len(schedules)
+
+    def test_delete_dangling_objects_legacy_schedules(self):
+        schedules = baker.make("django_q.Schedule", _quantity=3)
+        registry = TaskRegistry(
+            registered_tasks=set(
+                baker.make(
+                    "django_q_registry.Task",
+                    q_schedule=itertools.cycle(schedules),
+                    _quantity=len(schedules),
+                )
+            )
+        )
+        baker.make(
+            "django_q.Schedule",
+            name=itertools.cycle([f"dangling_schedule{i} - CRON" for i in range(3)]),
+            _quantity=3,
+        )
+
+        Task.objects.delete_dangling_objects(registry)
+
+        assert Schedule.objects.count() == len(schedules)
 
 
 class TestTask:

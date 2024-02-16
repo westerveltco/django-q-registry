@@ -77,11 +77,11 @@ class TaskQuerySet(models.QuerySet):
             kwargs=kwargs,
         )
 
-    def register(self, registry: TaskRegistry) -> TaskQuerySet:
+    def create_from_registry(self, registry: TaskRegistry) -> TaskQuerySet:
         """
-        Given a list of in-memory `Task` instances, save them to the database.
+        Given a `TaskRegistry` that contains a set of in-memory `Task` instances, save them to the database.
 
-        Note that this method operates on `Task` instances that only exist in memory and do not exist in the
+        Note that this method operates on `Task` instances that only exist in-memory and do not exist in the
         database yet. If a `Task` instance is passed in that already exists, it will be logged as an error
         and ignored.
 
@@ -94,7 +94,7 @@ class TaskQuerySet(models.QuerySet):
         Args:
             registry:
                 A TaskRegistry instance containing all of the `Task` instances that are currently registered
-                in memory, but not yet in the database.
+                in-memory, but not yet in the database.
 
         Returns:
             A TaskQuerySet containing all of the `Task` instances that were saved to the database.
@@ -149,21 +149,16 @@ class TaskQuerySet(models.QuerySet):
             pk__in=[task.pk for task in registry.registered_tasks],
         )
 
-    def unregister(self) -> None:
+    def delete_dangling_objects(self, registry: TaskRegistry) -> None:
         """
-        Delete all `Task` instances from the database and the associated `django_q.models.Schedule` instances.
-
-        This will operate on all `Task` instances contained in the QuerySet, so be sure to filter the QuerySet
-        before calling this method to only contain the `Task` instances that you want to unregister a.k.a.
-        delete from the database.
-
-        This method will also delete any dangling `django_q.models.Schedule` instances that are no longer
-        associated with any `Task` instances.
+        Delete all `Task` instances from the database and the associated `django_q.models.Schedule` instances
+        no longer associated with a `TaskRegistry`.
         """
+        to_delete = self.exclude_registered(registry)
 
-        q_schedule_pks = self.values_list("q_schedule", flat=True)
+        q_schedule_pks = to_delete.values_list("q_schedule", flat=True)
 
-        self.delete()
+        to_delete.delete()
 
         suffix = app_settings.PERIODIC_TASK_SUFFIX
         legacy_suffix = " - CRON"
@@ -174,7 +169,7 @@ class TaskQuerySet(models.QuerySet):
         Schedule.objects.filter(
             models.Q(name__endswith=suffix) & models.Q(registered_task__isnull=True)
         ).delete()
-        # clean up schedules of tasks that were just unregistered
+        # clean up schedules of tasks that were just deleted
         Schedule.objects.filter(pk__in=q_schedule_pks).delete()
 
 
