@@ -52,3 +52,4 @@ Initial release!
 - Josh Thomas <josh@joshthomas.dev> (maintainer)
 
 [unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.1.0
