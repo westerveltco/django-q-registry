@@ -27,6 +27,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 - The default for the `Q_REGISTRY["PERIOIDIC_TASK_SUFFIX"]` app setting has been changed from `"- CRON"` to `"- QREGISTRY"`.
 - All database logic has been moved from the `TaskRegistry` to the `setup_periodic_tasks` management command.
 
+### Fixed
+
+- Fixed a bug in the hashing of a `Task` where the `hash` function was passed unhashable values (e.g. a `dict`). Thanks to [@Tobi-De](https://github.com/Tobi-De) for the bug report ([#6](https://github.com/westerveltco/django-q-registry/issues/6)).
+
 ## [0.1.0]
 
 Initial release!
