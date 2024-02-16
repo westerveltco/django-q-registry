@@ -87,8 +87,6 @@ class TaskQuerySet(models.QuerySet):
                 func=task.func,
                 kwargs=task.kwargs,
             )
-            print("obj", obj)
-            print("created", _)
 
             if obj.q_schedule is None:
                 obj.q_schedule = Schedule.objects.create(
