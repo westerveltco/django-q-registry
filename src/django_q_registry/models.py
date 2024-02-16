@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class TaskQuerySet(models.QuerySet):
-    def create_in_memory(self, func: Callable, kwargs: dict[str, Any]) -> Task:
+    def create_in_memory(
+        self, func: Callable[..., Any], kwargs: dict[str, Any]
+    ) -> Task:
         """
         Returns a new Task instance with no primary key, for use in `django_q_registry.registry.TaskRegistry`.
 
@@ -82,7 +84,7 @@ class TaskQuerySet(models.QuerySet):
                 logger.error(f"Task {task.pk} has already been registered")
                 continue
 
-            obj, _ = self.model.objects.update_or_create(
+            obj, _ = self.update_or_create(
                 name=task.name,
                 func=task.func,
                 kwargs=task.kwargs,

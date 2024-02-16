@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from dataclasses import field
 from functools import wraps
 from typing import TYPE_CHECKING
+from typing import Any
 from typing import Callable
+from typing import cast
 
 from django.conf import settings
 
@@ -96,7 +98,7 @@ class TaskRegistry:
                 **task_dict,
             )
 
-    def _register_task(self, func: Callable | str, **kwargs):
+    def _register_task(self, func: Callable[..., Any] | str, **kwargs):
         """
         Register a task to the `registered_tasks` class attribute and return the function. Do not
         create the `Task` object in the database yet, to avoid the database being hit on
@@ -110,7 +112,7 @@ class TaskRegistry:
         # and used in this app config's `ready` method
         from django_q_registry.models import Task
 
-        if not isinstance(func, (str, Callable)):
+        if not callable(func) and not isinstance(func, str):
             msg = f"{func} is not a string or callable."
             raise TypeError(msg)
 
@@ -121,6 +123,9 @@ class TaskRegistry:
                 func = getattr(module, function_name)
             except (AttributeError, ImportError, ValueError) as err:
                 raise ImportError(f"Could not import {func}.") from err
+
+        # make mypy happy
+        func = cast(Callable[..., Any], func)
 
         self.registered_tasks.add(Task.objects.create_in_memory(func, kwargs))
 
