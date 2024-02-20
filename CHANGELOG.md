@@ -17,9 +17,17 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 -->
 ## [Unreleased]
 
+### Added
+
+- Added a `TaskRegistry.created_tasks` attribute to store the `Task` instances created by the `TaskRegistry`.
+
 ### Changed
 
 - Now using v2024.12 of `django-twc-package`.
+
+### Fixed
+
+- Fixed a bug in the `setup_periodic_tasks` management command where newly created tasks via `Task.objects.create_from_registry` were immediately deleted via `Task.objects.delete_dangling_objects`. Newly created tasks are now added to the `TaskRegistry.created_tasks` attribute and are only deleted if they are not in the `TaskRegistry.created_tasks` attribute.
 
 ## [0.2.0]
 
