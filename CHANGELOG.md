@@ -17,6 +17,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 -->
 ## [Unreleased]
 
+## [0.2.1]
+
 ### Added
 
 - Added a `TaskRegistry.created_tasks` attribute to store the `Task` instances created by the `TaskRegistry`.
@@ -65,6 +67,8 @@ Initial release!
 
 - Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.2.1...HEAD
 [0.1.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.1.0
 [0.2.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.0
+
+[0.2.1]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.1
