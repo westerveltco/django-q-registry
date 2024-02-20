@@ -146,7 +146,7 @@ class TaskRegistry:
             except ImportError:
                 continue
 
-    def update_created_tasks(self, tasks: TaskQuerySet[Task]) -> None:
+    def update_created_tasks(self, tasks: TaskQuerySet) -> None:
         """
         Update the `created_tasks` class attribute with the tasks that were created in the database.
 
