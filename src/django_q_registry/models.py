@@ -80,7 +80,8 @@ class TaskQuerySet(models.QuerySet):
 
     def create_from_registry(self, registry: TaskRegistry) -> TaskQuerySet:
         """
-        Given a `TaskRegistry` that contains a set of in-memory `Task` instances, save them to the database.
+        Given a `TaskRegistry` that contains a set of in-memory `Task` instances, save them to the database
+        and add them to the `TaskRegistry.created_tasks` attribute.
 
         Note that this method operates on `Task` instances that only exist in-memory and do not exist in the
         database yet. If a `Task` instance is passed in that already exists, it will be logged as an error
@@ -126,14 +127,18 @@ class TaskQuerySet(models.QuerySet):
 
             task_objs.append(obj)
 
-        return self.filter(pk__in=[task.pk for task in task_objs])
+        return_qs = self.filter(pk__in=[task.pk for task in task_objs])
+
+        registry.update_created_tasks(return_qs)
+
+        return return_qs
 
     def exclude_registered(self, registry: TaskRegistry) -> TaskQuerySet:
         """
         Get all `Task` instances that are no longer registered in the `TaskRegistry`.
 
         This method will return all `Task` instances that are not contained in the
-        `TaskRegistry.registered_tasks` attribute, for use in cleaning up the database of any `Task`
+        `TaskRegistry.created_tasks` attribute, for use in cleaning up the database of any `Task`
         instances that are no longer registered.
 
         Args:
@@ -146,9 +151,7 @@ class TaskQuerySet(models.QuerySet):
             `TaskRegistry`.
         """
 
-        return self.exclude(
-            pk__in=[task.pk for task in registry.registered_tasks],
-        )
+        return self.exclude(pk__in=[task.pk for task in registry.created_tasks])
 
     def delete_dangling_objects(self, registry: TaskRegistry) -> None:
         """

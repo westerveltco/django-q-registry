@@ -15,11 +15,13 @@ from django_q_registry.conf import app_settings
 
 if TYPE_CHECKING:
     from django_q_registry.models import Task
+    from django_q_registry.models import TaskQuerySet
 
 
 @dataclass
 class TaskRegistry:
     registered_tasks: set[Task] = field(default_factory=set)
+    created_tasks: set[Task] = field(default_factory=set)
 
     def __post_init__(self):
         self._register_settings()
@@ -143,6 +145,16 @@ class TaskRegistry:
                 importlib.import_module(tasks_module)
             except ImportError:
                 continue
+
+    def update_created_tasks(self, tasks: TaskQuerySet) -> None:
+        """
+        Update the `created_tasks` class attribute with the tasks that were created in the database.
+
+        Args:
+            tasks:
+                A queryset of `Task` objects that were created in the database.
+        """
+        self.created_tasks = set(tasks)
 
 
 registry = TaskRegistry()

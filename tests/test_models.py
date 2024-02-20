@@ -179,7 +179,7 @@ class TestTaskQuerySet:
 
     def test_exclude_registered(self):
         registry = TaskRegistry(
-            registered_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
+            created_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
         )
 
         excluded_tasks = Task.objects.exclude_registered(registry)
@@ -188,7 +188,7 @@ class TestTaskQuerySet:
 
     def test_exclude_registered_with_unregistered_tasks(self):
         registry = TaskRegistry(
-            registered_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
+            created_tasks=set(baker.make("django_q_registry.Task", _quantity=3))
         )
         unregistered_tasks = baker.make("django_q_registry.Task", _quantity=3)
 
@@ -200,7 +200,7 @@ class TestTaskQuerySet:
     def test_delete_dangling_objects_tasks(self):
         schedules = baker.make("django_q.Schedule", _quantity=3)
         registry = TaskRegistry(
-            registered_tasks=set(
+            created_tasks=set(
                 baker.make(
                     "django_q_registry.Task",
                     q_schedule=itertools.cycle(schedules),
@@ -217,7 +217,7 @@ class TestTaskQuerySet:
     def test_delete_dangling_objects_schedules(self):
         schedules = baker.make("django_q.Schedule", _quantity=3)
         registry = TaskRegistry(
-            registered_tasks=set(
+            created_tasks=set(
                 baker.make(
                     "django_q_registry.Task",
                     q_schedule=itertools.cycle(schedules),
@@ -243,7 +243,7 @@ class TestTaskQuerySet:
     def test_delete_dangling_objects_legacy_schedules(self):
         schedules = baker.make("django_q.Schedule", _quantity=3)
         registry = TaskRegistry(
-            registered_tasks=set(
+            created_tasks=set(
                 baker.make(
                     "django_q_registry.Task",
                     q_schedule=itertools.cycle(schedules),
