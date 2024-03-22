@@ -3,35 +3,32 @@ set dotenv-load := true
 @_default:
     just --list
 
-bootstrap:
-    python -m pip install --editable '.[dev]'
-
 # ----------------------------------------------------------------------
 # DEPENDENCIES
 # ----------------------------------------------------------------------
 
-pup:
-    python -m pip install --upgrade pip
-
-update:
+bootstrap:
     @just pup
-    @just bootstrap
+    python -m uv pip install --editable '.[dev]'
+
+pup:
+    python -m pip install --upgrade pip uv
 
 # ----------------------------------------------------------------------
 # TESTING/TYPES
 # ----------------------------------------------------------------------
 
 test *ARGS:
-    python -m nox --reuse-existing-virtualenvs --session "test" -- "{{ ARGS }}"
+    python -m nox --session "test" -- "{{ ARGS }}"
 
 testall *ARGS:
-    python -m nox --reuse-existing-virtualenvs --session "tests" -- "{{ ARGS }}"
+    python -m nox --session "tests" -- "{{ ARGS }}"
 
 coverage:
-    python -m nox --reuse-existing-virtualenvs --session "coverage"
+    python -m nox --session "coverage"
 
 types:
-    python -m nox --reuse-existing-virtualenvs --session "mypy"
+    python -m nox --session "mypy"
 
 # ----------------------------------------------------------------------
 # DJANGO
@@ -74,7 +71,8 @@ migrate *ARGS:
 # ----------------------------------------------------------------------
 
 @docs-install:
-    python -m pip install '.[docs]'
+    @just pup
+    python -m uv pip install 'django-q-registry[docs] @ .'
 
 @docs-serve:
     #!/usr/bin/env sh
@@ -102,7 +100,7 @@ fmt:
 
 # run pre-commit on all files
 lint:
-    python -m nox --reuse-existing-virtualenvs --session "lint"
+    python -m nox --session "lint"
 
 # ----------------------------------------------------------------------
 # COPIER
