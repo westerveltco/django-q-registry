@@ -18,6 +18,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Added
+
+-   Added a `py.typed` file for static type checkers.
+
 ## [0.3.1]
 
 ### Fixed
