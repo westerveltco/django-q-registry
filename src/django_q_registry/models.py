@@ -112,7 +112,7 @@ class TaskQuerySet(models.QuerySet):
             obj, _ = self.update_or_create(
                 name=task.name,
                 func=task.func,
-                kwargs=task.kwargs,
+                kwargs=json.dumps(task.kwargs, cls=DjangoJSONEncoder),
             )
 
             if obj.q_schedule is None:
