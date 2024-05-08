@@ -22,6 +22,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 -   Now using v2024.17 of `django-twc-package`.
 
+### Removed
+
+-   Dropped support for Django 3.2.
+
 ## [0.2.1]
 
 ### Added
