@@ -18,6 +18,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.3.1]
+
 ### Fixed
 
 -   Correctly JSON serialize `Task` kwargs when going from the in-memory representation contained in the task registry to actual model instances in the database. First reported by [@joshuadavidthomas](https://github.com/joshuadavidthomas) in [#30](https://github.com/westerveltco/django-q-registry/issues/30).
@@ -82,8 +84,9 @@ Initial release!
 
 -   Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.3.1...HEAD
 [0.1.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.1.0
 [0.2.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.0
 [0.2.1]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.1
 [0.3.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.3.0
+[0.3.1]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.3.1
