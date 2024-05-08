@@ -18,6 +18,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.3.0]
+
 ### Changed
 
 -   Now using v2024.18 of `django-twc-package`.
@@ -76,7 +78,8 @@ Initial release!
 
 -   Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.2.1...HEAD
+[unreleased]: https://github.com/westerveltco/django-q-registry/compare/v0.3.0...HEAD
 [0.1.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.1.0
 [0.2.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.0
 [0.2.1]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.2.1
+[0.3.0]: https://github.com/westerveltco/django-q-registry/releases/tag/v0.3.0
