@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+from datetime import datetime
 
 import pytest
 from django_q.models import Schedule
@@ -19,30 +20,41 @@ def task():
     return "test"
 
 
+# https://github.com/westerveltco/django-q-registry/issues/30
+@registry.register(
+    name="Issue 30 regression",
+    next_run=datetime(2024, 5, 8),
+    repeats=-1,
+    schedule_type=Schedule.QUARTERLY,
+)
+def issue_30_regression():
+    return "test"
+
+
 def test_setup_periodic_tasks():
-    assert len(registry.registered_tasks) == 1
+    assert len(registry.registered_tasks) == 2
     assert Task.objects.count() == 0
     assert Schedule.objects.count() == 0
 
     setup_periodic_tasks.Command().handle()
 
-    assert len(registry.registered_tasks) == 1
-    assert len(registry.created_tasks) == 1
-    assert Task.objects.count() == 1
-    assert Schedule.objects.count() == 1
+    assert len(registry.registered_tasks) == 2
+    assert len(registry.created_tasks) == 2
+    assert Task.objects.count() == 2
+    assert Schedule.objects.count() == 2
 
 
 def test_setup_periodic_tasks_dangling_tasks():
     baker.make("django_q_registry.Task", _quantity=3)
 
-    assert len(registry.registered_tasks) == 1
+    assert len(registry.registered_tasks) == 2
     assert Task.objects.count() == 3
 
     setup_periodic_tasks.Command().handle()
 
-    assert len(registry.registered_tasks) == 1
-    assert len(registry.created_tasks) == 1
-    assert Task.objects.count() == 1
+    assert len(registry.registered_tasks) == 2
+    assert len(registry.created_tasks) == 2
+    assert Task.objects.count() == 2
 
 
 def test_setup_periodic_tasks_dangling_schedules():
@@ -57,14 +69,14 @@ def test_setup_periodic_tasks_dangling_schedules():
         _quantity=3,
     )
 
-    assert len(registry.registered_tasks) == 1
+    assert len(registry.registered_tasks) == 2
     assert Schedule.objects.count() == 3
 
     setup_periodic_tasks.Command().handle()
 
-    assert len(registry.registered_tasks) == 1
-    assert len(registry.created_tasks) == 1
-    assert Schedule.objects.count() == 1
+    assert len(registry.registered_tasks) == 2
+    assert len(registry.created_tasks) == 2
+    assert Schedule.objects.count() == 2
 
 
 def test_setup_periodic_tasks_dangling_legacy_schedules():
@@ -75,11 +87,11 @@ def test_setup_periodic_tasks_dangling_legacy_schedules():
         _quantity=len(schedules),
     )
 
-    assert len(registry.registered_tasks) == 1
+    assert len(registry.registered_tasks) == 2
     assert Schedule.objects.count() == 6
 
     setup_periodic_tasks.Command().handle()
 
-    assert len(registry.registered_tasks) == 1
-    assert len(registry.created_tasks) == 1
-    assert Schedule.objects.count() == 1 + len(schedules)
+    assert len(registry.registered_tasks) == 2
+    assert len(registry.created_tasks) == 2
+    assert Schedule.objects.count() == 2 + len(schedules)

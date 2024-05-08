@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+from datetime import datetime
 
 import pytest
 from django_q.models import Schedule
@@ -260,6 +261,21 @@ class TestTaskQuerySet:
         Task.objects.delete_dangling_objects(registry)
 
         assert Schedule.objects.count() == len(schedules)
+
+    def test_create_in_memory_with_datetime(self):
+        # sanity check for this related issue:
+        # https://github.com/westerveltco/django-q-registry/issues/30
+        def test_task():
+            pass
+
+        task_kwargs = {
+            "datetime": datetime(2024, 5, 8),
+        }
+
+        in_memory_task = Task.objects.create_in_memory(test_task, task_kwargs)
+
+        assert not in_memory_task.pk
+        assert in_memory_task.kwargs["datetime"] == task_kwargs["datetime"]
 
 
 class TestTask:
