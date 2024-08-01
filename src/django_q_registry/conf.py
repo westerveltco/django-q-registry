@@ -11,7 +11,7 @@ DJANGO_Q_REGISTRY_SETTINGS_NAME = "Q_REGISTRY"
 
 @dataclass(frozen=True)
 class AppSettings:
-    PERIODIC_TASK_SUFFIX: str = "- QREGISTRY"
+    PERIODIC_TASK_SUFFIX: str = " - QREGISTRY"
     TASKS: list[dict[str, object]] = []
 
     @override
