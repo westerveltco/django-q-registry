@@ -11,12 +11,12 @@ A Django app to register periodic Django Q tasks.
 
 ## Requirements
 
-- Python 3.8, 3.9, 3.10, 3.11, 3.12
+- Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13
 - Django 4.2, 5.0
 - Django Q2 1.4.3+
   - This package has only been tested with the Django ORM broker.
 
-## Getting Started
+## Installation
 
 1. Install the package from PyPI:
 
@@ -34,7 +34,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-## Usage
+## Getting Started
 
 ### Registering Periodic Tasks
 

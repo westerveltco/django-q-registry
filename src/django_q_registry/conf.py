@@ -1,23 +1,26 @@
+# pyright: reportAny=false
 from __future__ import annotations
 
+from dataclasses import dataclass
+from dataclasses import field
 from typing import Any
-from typing import ClassVar
 
 from django.conf import settings
 
+from ._typing import override
 
+DJANGO_Q_REGISTRY_SETTINGS_NAME = "Q_REGISTRY"
+
+
+@dataclass(frozen=True)
 class AppSettings:
-    DEFAULT_SETTINGS: ClassVar[dict[str, Any]] = {
-        "PERIODIC_TASK_SUFFIX": " - QREGISTRY",
-        "TASKS": [],
-    }
+    PERIODIC_TASK_SUFFIX: str = " - QREGISTRY"
+    TASKS: list[dict[str, Any]] = field(default_factory=list)
 
-    def __getattr__(self, key):
-        return self.get(key)
-
-    def get(self, key):
-        user_settings = getattr(settings, "Q_REGISTRY", {})
-        return user_settings.get(key, self.DEFAULT_SETTINGS.get(key))
+    @override
+    def __getattribute__(self, __name: str) -> object:
+        user_settings = getattr(settings, DJANGO_Q_REGISTRY_SETTINGS_NAME, {})
+        return user_settings.get(__name, super().__getattribute__(__name))
 
 
 app_settings = AppSettings()

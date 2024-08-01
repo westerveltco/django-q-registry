@@ -19,6 +19,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython"
 ]
 dependencies = ["django>=4.2", "django_q2>=1.4.3"]
@@ -48,7 +49,8 @@ dev = [
   "pytest-django",
   "pytest-randomly",
   "pytest-reverse",
-  "pytest-xdist"
+  "pytest-xdist",
+  "ruff"
 ]
 docs = [
   "cogapp",
@@ -102,7 +104,12 @@ django_settings_module = "tests.settings"
 strict_settings = false
 
 [tool.djlint]
+blank_line_after_tag = "endblock,endpartialdef,extends,load"
+blank_line_before_tag = "block,partialdef"
+custom_blocks = "partialdef"
+ignore = "H031"  # Don't require `meta` tag keywords
 indent = 2
+profile = "django"
 
 [tool.hatch.build]
 exclude = [".*", "Justfile"]
@@ -115,7 +122,13 @@ path = "src/django_q_registry/__init__.py"
 
 [tool.mypy]
 check_untyped_defs = true
-exclude = "docs/.*\\.py$"
+exclude = [
+  "docs",
+  "tests",
+  "migrations",
+  "venv",
+  ".venv"
+]
 mypy_path = "src/"
 no_implicit_optional = true
 plugins = ["mypy_django_plugin.main"]
@@ -126,7 +139,12 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_errors = true
 ignore_missing_imports = true
-module = ["django_q.*", "django_q_registry.*.migrations.*", "tests.*"]
+module = [
+  "*.migrations.*",
+  "django_q.*",
+  "docs.*",
+  "tests.*"
+]
 
 [tool.mypy_django_plugin]
 ignore_missing_model_attributes = true
