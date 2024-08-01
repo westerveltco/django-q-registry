@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from dataclasses import field
 from typing import Any
 
 from django.conf import settings
@@ -14,7 +15,7 @@ DJANGO_Q_REGISTRY_SETTINGS_NAME = "Q_REGISTRY"
 @dataclass(frozen=True)
 class AppSettings:
     PERIODIC_TASK_SUFFIX: str = " - QREGISTRY"
-    TASKS: list[dict[str, Any]] = []
+    TASKS: list[dict[str, Any]] = field(default_factory=list)
 
     @override
     def __getattribute__(self, __name: str) -> object:
