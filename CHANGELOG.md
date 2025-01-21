@@ -18,6 +18,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Removed
+
+- Dropped support for Python 3.8.
+
 ## [0.4.0]
 
 ### Added
@@ -92,8 +96,8 @@ Initial release!
 - Initial tests.
 - Initial CI/CD (GitHub Actions).
 - A registry for Django Q2 periodic tasks.
-  - `registry.register` function for registering periodic tasks with a convenience decorator `register_task`.
-  - A `TASKS` setting for registering periodic tasks from Django settings.
+    - `registry.register` function for registering periodic tasks with a convenience decorator `register_task`.
+    - A `TASKS` setting for registering periodic tasks from Django settings.
 - Autodiscovery of periodic tasks from a Django project's `tasks.py` files.
 - A `setup_periodic_tasks` management command for setting up periodic tasks in the Django Q2 broker.
 

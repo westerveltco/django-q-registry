@@ -3,7 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [project]
-authors = [{name = "Josh Thomas", email = "josh@joshthomas.dev"}]
+authors = [{ name = "Josh Thomas", email = "josh@joshthomas.dev" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: Django",
@@ -14,22 +14,21 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: Implementation :: CPython"
+  "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = ["django>=4.2", "django_q2>=1.4.3"]
 description = "A Django app to register periodic Django Q tasks."
 dynamic = ["version"]
 keywords = []
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 name = "django-q-registry"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = [
@@ -50,7 +49,7 @@ dev = [
   "pytest-randomly",
   "pytest-reverse",
   "pytest-xdist",
-  "ruff"
+  "ruff",
 ]
 docs = [
   "cogapp",
@@ -59,7 +58,7 @@ docs = [
   "sphinx",
   "sphinx-autobuild",
   "sphinx-copybutton",
-  "sphinx-inline-tabs"
+  "sphinx-inline-tabs",
 ]
 lint = ["pre-commit"]
 
@@ -72,7 +71,7 @@ Source = "https://github.com/westerveltco/django-q-registry"
 commit = true
 commit_message = ":bookmark: bump version {old_version} -> {new_version}"
 current_version = "0.4.0"
-push = false  # set to false for CI
+push = false                                                              # set to false for CI
 tag = false
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 
@@ -91,7 +90,7 @@ exclude_lines = [
   "if not DEBUG:",
   "if settings.DEBUG:",
   "if TYPE_CHECKING:",
-  'def __str__\(self\)\s?\-?\>?\s?\w*\:'
+  'def __str__\(self\)\s?\-?\>?\s?\w*\:',
 ]
 fail_under = 75
 
@@ -107,7 +106,7 @@ strict_settings = false
 blank_line_after_tag = "endblock,endpartialdef,extends,load"
 blank_line_before_tag = "block,partialdef"
 custom_blocks = "partialdef"
-ignore = "H031"  # Don't require `meta` tag keywords
+ignore = "H031"                                              # Don't require `meta` tag keywords
 indent = 2
 profile = "django"
 
@@ -122,13 +121,7 @@ path = "src/django_q_registry/__init__.py"
 
 [tool.mypy]
 check_untyped_defs = true
-exclude = [
-  "docs",
-  "tests",
-  "migrations",
-  "venv",
-  ".venv"
-]
+exclude = ["docs", "tests", "migrations", "venv", ".venv"]
 mypy_path = "src/"
 no_implicit_optional = true
 plugins = ["mypy_django_plugin.main"]
@@ -139,12 +132,7 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_errors = true
 ignore_missing_imports = true
-module = [
-  "*.migrations.*",
-  "django_q.*",
-  "docs.*",
-  "tests.*"
-]
+module = ["*.migrations.*", "django_q.*", "docs.*", "tests.*"]
 
 [tool.mypy_django_plugin]
 ignore_missing_model_attributes = true
@@ -177,7 +165,7 @@ exclude = [
   "dist",
   "migrations",
   "node_modules",
-  "venv"
+  "venv",
 ]
 extend-include = ["*.pyi?"]
 indent-width = 4
@@ -199,13 +187,13 @@ quote-style = "double"
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["A", "B", "C", "D", "E", "F", "I"]
-ignore = ["E501", "E741"]  # temporary
+ignore = ["E501", "E741"] # temporary
 select = [
   "B",  # flake8-bugbear
   "E",  # Pycodestyle
   "F",  # Pyflakes
   "I",  # isort
-  "UP"  # pyupgrade
+  "UP", # pyupgrade
 ]
 unfixable = []
 
