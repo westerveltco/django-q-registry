@@ -14,7 +14,6 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -29,7 +28,7 @@ keywords = []
 license = {file = "LICENSE"}
 name = "django-q-registry"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = [
@@ -122,13 +121,7 @@ path = "src/django_q_registry/__init__.py"
 
 [tool.mypy]
 check_untyped_defs = true
-exclude = [
-  "docs",
-  "tests",
-  "migrations",
-  "venv",
-  ".venv"
-]
+exclude = ["docs", "tests", "migrations", "venv", ".venv"]
 mypy_path = "src/"
 no_implicit_optional = true
 plugins = ["mypy_django_plugin.main"]
@@ -139,12 +132,7 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 ignore_errors = true
 ignore_missing_imports = true
-module = [
-  "*.migrations.*",
-  "django_q.*",
-  "docs.*",
-  "tests.*"
-]
+module = ["*.migrations.*", "django_q.*", "docs.*", "tests.*"]
 
 [tool.mypy_django_plugin]
 ignore_missing_model_attributes = true
