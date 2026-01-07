@@ -101,7 +101,7 @@ _cog:
 fmt:
     just --fmt --unstable
 
-# run pre-commit on all files
+# run prek on all files
 lint:
     python -m nox --session "lint"
 
