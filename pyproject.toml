@@ -62,7 +62,7 @@ docs = [
   "sphinx-copybutton",
   "sphinx-inline-tabs"
 ]
-lint = ["pre-commit"]
+lint = ["prek"]
 
 [project.urls]
 Documentation = "https://django-q-registry.westervelt.dev/"
