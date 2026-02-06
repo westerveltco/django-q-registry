@@ -133,16 +133,22 @@ class TaskRegistry:
 
         return func
 
-    def autodiscover_tasks(self):
+    def autodiscover_tasks(self, extra_modules: list[str] | None = None):
         """
         Autodiscover tasks from all apps in INSTALLED_APPS.
 
         This is a simplified version of Celery's autodiscover_tasks function.
         """
-        for app_name in settings.INSTALLED_APPS:
-            tasks_module = f"{app_name}.tasks"
+        if extra_modules is None:
+            extra_modules = []
+
+        modules = [
+            f"{app_name}.tasks" for app_name in settings.INSTALLED_APPS
+        ] + extra_modules
+
+        for module in modules:
             try:
-                importlib.import_module(tasks_module)
+                importlib.import_module(module)
             except ImportError:
                 continue
 
