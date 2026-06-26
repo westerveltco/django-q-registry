@@ -194,6 +194,9 @@ class Task(models.Model):
 
     objects = TaskQuerySet.as_manager()
 
+    def __str__(self) -> str:
+        return self.name
+
     def __hash__(self) -> int:
         if self.pk is not None:
             return super().__hash__()
