@@ -106,7 +106,7 @@ class TaskQuerySet(models.QuerySet):
 
         for task in registry.registered_tasks:
             if task.pk:
-                logger.error(f"Task {task.pk} has already been registered")
+                logger.error("Task %s has already been registered", task.pk)
                 continue
 
             obj, _ = self.update_or_create(
@@ -193,6 +193,9 @@ class Task(models.Model):
     kwargs = models.JSONField(default=dict)
 
     objects = TaskQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        return self.name
 
     def __hash__(self) -> int:
         if self.pk is not None:

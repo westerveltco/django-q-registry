@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime
+from datetime import timezone
 
 import pytest
 from django_q.models import Schedule
@@ -23,7 +24,7 @@ def task():
 # https://github.com/westerveltco/django-q-registry/issues/30
 @registry.register(
     name="Issue 30 regression",
-    next_run=datetime(2024, 5, 8),
+    next_run=datetime(2024, 5, 8, tzinfo=timezone.utc),
     repeats=-1,
     schedule_type=Schedule.QUARTERLY,
 )

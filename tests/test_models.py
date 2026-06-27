@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime
+from datetime import timezone
 
 import pytest
 from django_q.models import Schedule
@@ -129,7 +130,7 @@ class TestTaskQuerySet:
 
     def test_register_existing_task(self, caplog):
         existing_task = baker.make("django_q_registry.Task")
-        registry = TaskRegistry(registered_tasks=set([existing_task]))
+        registry = TaskRegistry(registered_tasks={existing_task})
 
         with caplog.at_level("ERROR"):
             Task.objects.create_from_registry(registry)
@@ -139,7 +140,7 @@ class TestTaskQuerySet:
     def test_register_existing_task_with_new_task(self, caplog):
         new_task = baker.prepare("django_q_registry.Task", name="new_task")
         existing_task = baker.make("django_q_registry.Task", name="existing_task")
-        registry = TaskRegistry(registered_tasks=set([new_task, existing_task]))
+        registry = TaskRegistry(registered_tasks={new_task, existing_task})
 
         with caplog.at_level("ERROR"):
             Task.objects.create_from_registry(registry)
@@ -167,7 +168,7 @@ class TestTaskQuerySet:
     def test_register_schedule_update(self):
         schedule = baker.make("django_q.Schedule")
         task = baker.prepare("django_q_registry.Task", q_schedule=schedule)
-        registry = TaskRegistry(registered_tasks=set([task]))
+        registry = TaskRegistry(registered_tasks={task})
 
         registered_tasks = Task.objects.create_from_registry(registry)
 
@@ -269,7 +270,7 @@ class TestTaskQuerySet:
             pass
 
         task_kwargs = {
-            "datetime": datetime(2024, 5, 8),
+            "datetime": datetime(2024, 5, 8, tzinfo=timezone.utc),
         }
 
         in_memory_task = Task.objects.create_in_memory(test_task, task_kwargs)
