@@ -78,8 +78,7 @@ class TaskRegistry:
         """
         if len(args) == 1 and callable(args[0]):
             return self._register_task(args[0], **kwargs)
-        else:
-            return self._register_decorator(**kwargs)
+        return self._register_decorator(**kwargs)
 
     def _register_decorator(self, **kwargs):
         def decorator(func: Callable):
