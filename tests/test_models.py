@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime
-from datetime import timezone
 
 import pytest
 from django_q.models import Schedule
@@ -270,7 +269,7 @@ class TestTaskQuerySet:
             pass
 
         task_kwargs = {
-            "datetime": datetime(2024, 5, 8, tzinfo=timezone.utc),
+            "datetime": datetime(2024, 5, 8),
         }
 
         in_memory_task = Task.objects.create_in_memory(test_task, task_kwargs)

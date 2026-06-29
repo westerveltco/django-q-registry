@@ -221,7 +221,7 @@ required-imports = ["from __future__ import annotations"]
 # Sphinx requires a module-level `copyright` variable.
 "docs/conf.py" = ["A001"]
 # Tests can use magic values, assertions, and relative imports
-"tests/**/*" = ["PLR2004", "S101", "TID252"]
+"tests/**/*" = ["DTZ", "PLR2004", "S101", "TID252"]
 
 [tool.ruff.lint.pyupgrade]
 # Preserve types, even if a file imports `from __future__ import annotations`.
