@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import importlib
+from collections.abc import Callable
 from dataclasses import dataclass
 from dataclasses import field
 from functools import wraps
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Callable
 from typing import cast
 
 from django.conf import settings

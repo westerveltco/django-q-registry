@@ -7,9 +7,6 @@ authors = [{name = "Josh Thomas", email = "josh@joshthomas.dev"}]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: Django",
-  "Framework :: Django :: 4.2",
-  "Framework :: Django :: 5.0",
-  "Framework :: Django :: 5.1",
   "Framework :: Django :: 5.2",
   "Framework :: Django :: 6.0",
   "Framework :: Django :: 6.1",
@@ -18,7 +15,6 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -26,14 +22,14 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython"
 ]
-dependencies = ["django>=4.2", "django_q2>=1.4.3"]
+dependencies = ["django>=5.2", "django_q2>=1.4.3"]
 description = "A Django app to register periodic Django Q tasks."
 dynamic = ["version"]
 keywords = []
 license = {file = "LICENSE"}
 name = "django-q-registry"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 dev = [
@@ -176,8 +172,8 @@ extend-include = ["*.pyi?"]
 indent-width = 4
 # Same as Black.
 line-length = 88
-# Assume Python >3.8
-target-version = "py38"
+# Assume Python >3.10
+target-version = "py310"
 
 [tool.ruff.format]
 # Like Black, indent with spaces, rather than tabs.
