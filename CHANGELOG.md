@@ -18,6 +18,15 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Added
+
+- Support for Django 6.0 and 6.1.
+- Support for Python 3.14.
+
+### Fixed
+
+- Corrected the Django 5.2 test matrix pin from the `5.2a1` pre-release to the final `5.2` release.
+
 ## [0.5.0]
 
 ### Added
