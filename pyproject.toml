@@ -22,7 +22,11 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython"
 ]
-dependencies = ["django>=5.2", "django_q2>=1.4.3"]
+dependencies = [
+  "django>=5.2",
+  "django_q2>=1.4.3",
+  "typing-extensions>=4.4.0; python_version < '3.12'"
+]
 description = "A Django app to register periodic Django Q tasks."
 dynamic = ["version"]
 keywords = []

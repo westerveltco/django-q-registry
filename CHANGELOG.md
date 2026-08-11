@@ -31,6 +31,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 ### Fixed
 
 - Corrected the Django 5.2 test matrix pin from the `5.2a1` pre-release to the final `5.2` release.
+- Declared `typing-extensions` as a runtime dependency on Python 3.10 and 3.11, where it is required for `typing_extensions.override`. Previously it was only present transitively, so a clean install could fail at import time.
 
 ## [0.5.0]
 
