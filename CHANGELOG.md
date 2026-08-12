@@ -18,6 +18,22 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Added
+
+- Support for Django 6.0 and 6.1.
+- Support for Python 3.14.
+
+### Removed
+
+- Dropped support for Python 3.9.
+- Dropped support for Django 4.2, 5.0, and 5.1.
+
+### Fixed
+
+- Parameterized `TaskQuerySet` as `models.QuerySet["Task"]` so `update_or_create` is typed as returning `Task` rather than `_Model`.
+- Corrected the Django 5.2 test matrix pin from the `5.2a1` pre-release to the final `5.2` release.
+- Declared `typing-extensions` as a runtime dependency on Python 3.10 and 3.11, where it is required for `typing_extensions.override`. Previously it was only present transitively, so a clean install could fail at import time.
+
 ## [0.5.0]
 
 ### Added

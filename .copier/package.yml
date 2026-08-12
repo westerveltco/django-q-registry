@@ -5,8 +5,9 @@ author_email: josh@joshthomas.dev
 author_name: Josh Thomas
 current_version: 0.5.0
 django_versions:
-- '4.2'
-- '5.0'
+- '5.2'
+- '6.0'
+- '6.1'
 docs_domain: westervelt.dev
 github_owner: westerveltco
 github_repo: django-q-registry
@@ -14,11 +15,10 @@ module_name: django_q_registry
 package_description: A Django app to register periodic Django Q tasks.
 package_name: django-q-registry
 python_versions:
-- '3.8'
-- '3.9'
 - '3.10'
 - '3.11'
 - '3.12'
 - '3.13'
+- '3.14'
 test_django_main: true
 versioning_scheme: SemVer

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Callable
 from typing import Any
-from typing import Callable
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -15,7 +15,7 @@ from django_q_registry.registry import TaskRegistry
 logger = logging.getLogger(__name__)
 
 
-class TaskQuerySet(models.QuerySet):
+class TaskQuerySet(models.QuerySet["Task"]):
     def create_in_memory(
         self, func: Callable[..., Any], kwargs: dict[str, Any]
     ) -> Task:

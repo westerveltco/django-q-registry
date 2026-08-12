@@ -2,17 +2,17 @@
 
 [![PyPI](https://img.shields.io/pypi/v/django-q-registry)](https://pypi.org/project/django-q-registry/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-q-registry)
-![Django Version](https://img.shields.io/badge/django-4.2%20%7C%205.0-%2344B78B?labelColor=%23092E20)
+![Django Version](https://img.shields.io/badge/django-5.2%20%7C%206.0%20%7C%206.1-%2344B78B?labelColor=%23092E20)
 <!-- https://shields.io/badges -->
-<!-- django-4.2 | 5.0-#44B78B -->
+<!-- django-5.2 | 6.0 | 6.1-#44B78B -->
 <!-- labelColor=%23092E20 -->
 
 A Django app to register periodic Django Q tasks.
 
 ## Requirements
 
-- Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13
-- Django 4.2, 5.0
+- Python 3.10, 3.11, 3.12, 3.13, 3.14
+- Django 5.2, 6.0, 6.1
 - Django Q2 1.4.3+
   - This package has only been tested with the Django ORM broker.
 
